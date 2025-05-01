@@ -11,12 +11,8 @@ class User {
   String get email => _email;
   String get username => _username;
 
-  bool validarLogin(String identificador, String senha) {
-    final bool loginPorEmailCorreto =
-        identificador == _email && senha == _senha;
-    final bool loginPorUsernameCorreto =
-        identificador == _username && senha == _senha;
-
-    return loginPorEmailCorreto || loginPorUsernameCorreto;
+  
+  bool validarSenha(String tentativa) {
+    return tentativa == _senha;
   }
 }

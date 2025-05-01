@@ -2,28 +2,27 @@ import '../models/user.dart';
 
 class AuthController {
   final List<User> _usuarios = <User>[];
-  User? _usuarioLogado;
 
+  User? _usuarioLogado;
 
   User? get usuarioLogado => _usuarioLogado;
 
-
   bool login(String identificador, String senha) {
     for (User user in _usuarios) {
-      if (user.validarLogin(identificador, senha)) {
-        _usuarioLogado = user;
-        return true;
+      if (identificador == user.email || identificador == user.username) {
+        return user.validarSenha(senha);
       }
     }
     return false;
   }
 
-  bool registrar(String email, String username, String senha) {   
-    bool existe = _usuarios.any(
-      (User u) => u.email == email || u.username == username,
-    );
-
-    if (existe) return false;
+  bool registro(String email, String username, String senha) {  
+    
+    for (User user in _usuarios) {
+      if (user.email == email || user.username == username) {
+        return false;
+      }
+    }
 
     final User novoUsuario = User(
       email: email,
@@ -35,7 +34,6 @@ class AuthController {
     _usuarioLogado = novoUsuario;
     return true;
   }
-
 
   void logout() {
     _usuarioLogado = null;
