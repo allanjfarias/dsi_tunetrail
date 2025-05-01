@@ -1,135 +1,201 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'cadastro.dart';
+import '../controller/auth_controller.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _senhaController = TextEditingController();
+
+  final AuthController _authController = AuthController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _senhaController.dispose();
+    super.dispose();
+  }
+
+  void _handleLogin() {
+    if (_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Processando login...')),
+      );
+
+      bool sucesso = _authController.login(
+        _emailController.text,
+        _senhaController.text,
+      );
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      if (sucesso) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login bem-sucedido!'), backgroundColor: Colors.green),
+        );
+        // TODO: Navegar para a tela principal do aplicativo após login
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Falha no login. Verifique seu e-mail e senha.'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         color: const Color(0xff0A0A0A),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'TuneTrail',
-                style: GoogleFonts.inter(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xff247FFF),
-                ),
-              ),
-              const SizedBox(height: 40),
-              _buildTextField('E-mail', Icons.mail),
-              const SizedBox(height: 20),
-              _buildTextField('Senha', Icons.lock, isPassword: true),
-              const SizedBox(height: 30),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: (){
-                    // Lógica de login
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    backgroundColor: Color(0xff347FFF)
-                  ),
-                  child: const Text(
-                    'Entrar',
-                    style: TextStyle(
-                      color: Color(0xffF2F2F2),
-                      fontSize: 18),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              TextButton(
-                onPressed: (){
-                  // Navegar para a tela de recuperação de senha
-                },
-                child: const Text(
-                  'Esqueci minha senha',
-                  style: TextStyle(color: Color(0xffF2F2F2)),
-                ),
-              ),
-              const SizedBox(height: 30),
-              Row(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Não tem uma conta? ',
-                    style: TextStyle(color: Color(0xffF2F2F2)),
+                children: <Widget>[
+                  Text(
+                    'TuneTrail',
+                    style: GoogleFonts.inter(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff247FFF),
+                    ),
                   ),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (_, animation, secondaryAnimation) => CadastroScreen(),
-                          transitionsBuilder: (_, animation, secondaryAnimation, child) {
-                            return SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(1.0, 0.0),
-                                end: Offset.zero,
-                              ).animate(CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeInOutQuint,
-                              )),
-                              child: FadeTransition(
-                                opacity: animation,
-                                child: child
-                              ),
-                            );
-                          },
-                          transitionDuration: const Duration(milliseconds: 500),
-                        ),
-                        //MaterialPageRoute(builder: (context) => const CadastroScreen()),
-                      );
-                    },
-                    child: const Text(
-                      'Cadastre-se',
-                      style: TextStyle(
-                        color: Color(0xff6CA0DC),
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
+                  const SizedBox(height: 40),
+                  _buildTextFormField('E-mail', Icons.mail, controller: _emailController, keyboardType: TextInputType.emailAddress, validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, insira seu e-mail.';
+                    }
+                    if (!value.contains('@') || !value.contains('.')) {
+                       return 'Por favor, insira um e-mail válido.';
+                    }
+                    return null;
+                  }),
+                  const SizedBox(height: 20),
+                  _buildTextFormField('Senha', Icons.lock, controller: _senhaController, isPassword: true, validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, insira sua senha.';
+                    }
+                    return null;
+                  }),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      // Chamar _handleLogin
+                      onPressed: _handleLogin,
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: Color(0xff347FFF)),
+                      child: const Text(
+                        'Entrar',
+                        style: TextStyle(color: Color(0xffF2F2F2), fontSize: 18),
                       ),
                     ),
                   ),
+                  const SizedBox(height: 15),
+                  TextButton(
+                    onPressed: () {
+                      // TODO: Navegar para a tela de recuperação de senha
+                       ScaffoldMessenger.of(context).showSnackBar(
+                         const SnackBar(content: Text('Funcionalidade "Esqueci minha senha" não implementada.')),
+                       );
+                    },
+                    child: const Text(
+                      'Esqueci minha senha',
+                      style: TextStyle(color: Color(0xffF2F2F2)),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Não tem uma conta? ',
+                        style: TextStyle(color: Color(0xffF2F2F2)),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (_, animation, secondaryAnimation) => CadastroScreen(),
+                              transitionsBuilder: (_, animation, secondaryAnimation, child) {
+                                return SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(1.0, 0.0),
+                                    end: Offset.zero,
+                                  ).animate(CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeInOutQuint,
+                                  )),
+                                  child: FadeTransition(opacity: animation, child: child),
+                                );
+                              },
+                              transitionDuration: const Duration(milliseconds: 500),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Cadastre-se',
+                          style: TextStyle(
+                            color: Color(0xff6CA0DC),
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
         ),
       ),
-      ),
     );
-    
   }
-}
 
-Widget _buildTextField(String label, IconData icon, {bool isPassword = false}) {
-  return TextField(
-    obscureText: isPassword,
-    decoration: InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-      prefixIcon: Icon(icon, color: Color(0xffF2F2F2)),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xff303131)),
+  Widget _buildTextFormField(String label, IconData icon, {bool isPassword = false, TextEditingController? controller, String? Function(String?)? validator, TextInputType? keyboardType}) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      keyboardType: keyboardType,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
+        prefixIcon: Icon(icon, color: Color(0xffF2F2F2)),
+        enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xff303131)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+        ),
+         errorBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 1),
+        ),
+        focusedErrorBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 2),
+        ),
+        filled: true,
+        fillColor: Color(0xff10100E),
       ),
-      focusedBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.white),
-      ),
-      filled: true,
-      fillColor: Color(0xff10100E),
-    ),
-    style: const TextStyle(color: Colors.white),
-  );
+      validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+    );
+  }
 }
