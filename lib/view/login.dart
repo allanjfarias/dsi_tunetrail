@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'cadastro.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -61,14 +62,36 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
+                children: [
                   const Text(
                     'Não tem uma conta? ',
                     style: TextStyle(color: Color(0xffF2F2F2)),
                   ),
                   GestureDetector(
                     onTap: (){
-                      // Navegar para tela de cadastro
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (_, animation, secondaryAnimation) => CadastroScreen(),
+                          transitionsBuilder: (_, animation, secondaryAnimation, child) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(1.0, 0.0),
+                                end: Offset.zero,
+                              ).animate(CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeInOutQuint,
+                              )),
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child
+                              ),
+                            );
+                          },
+                          transitionDuration: const Duration(milliseconds: 500),
+                        ),
+                        //MaterialPageRoute(builder: (context) => const CadastroScreen()),
+                      );
                     },
                     child: const Text(
                       'Cadastre-se',

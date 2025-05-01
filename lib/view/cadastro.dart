@@ -7,6 +7,14 @@ class CadastroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xff0A0A0A),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xff247FFF)),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Container(
         color: const Color(0xff0A0A0A),
         child: Center(
