@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +13,7 @@ class LoginScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               Text(
                 'TuneTrail',
                 style: GoogleFonts.inter(
@@ -61,7 +61,7 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: <Widget>[
                   const Text(
                     'Não tem uma conta? ',
                     style: TextStyle(color: Color(0xffF2F2F2)),
