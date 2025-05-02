@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'cadastro.dart';
 import '../controller/auth_controller.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,9 +25,12 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      final ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+      final NavigatorState navigator = Navigator.of(context);
+
+      scaffoldMessenger.showSnackBar(
         const SnackBar(content: Text('Processando login...')),
       );
 
@@ -35,21 +39,24 @@ class _LoginScreenState extends State<LoginScreen> {
         _senhaController.text,
       );
 
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      scaffoldMessenger.hideCurrentSnackBar();
 
       if (sucesso) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           const SnackBar(content: Text('Login bem-sucedido!'), backgroundColor: Colors.green),
         );
-        // TODO: Navegar para a tela principal do aplicativo após login
+        if (mounted) {
+          navigator.pushReplacement(
+            MaterialPageRoute<void>(builder: (BuildContext context) => const HomeScreen()),
+          );
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           const SnackBar(content: Text('Falha no login. Verifique seu e-mail e senha.'), backgroundColor: Colors.red),
         );
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xff247FFF),
+                      color: const Color(0xff247FFF),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -92,14 +99,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      // Chamar _handleLogin
                       onPressed: _handleLogin,
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          backgroundColor: Color(0xff347FFF)),
+                          backgroundColor: const Color(0xff347FFF)),
                       child: const Text(
                         'Entrar',
                         style: TextStyle(color: Color(0xffF2F2F2), fontSize: 18),
@@ -132,8 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.push(
                             context,
                             PageRouteBuilder<dynamic>(
-                              pageBuilder: (_, Animation<double> animation, Animation<double> secondaryAnimation) => CadastroScreen(),
-                              transitionsBuilder: (_, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                              pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) => const CadastroScreen(),
+                              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
                                 return SlideTransition(
                                   position: Tween<Offset>(
                                     begin: const Offset(1.0, 0.0),
@@ -178,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: Color(0xffF2F2F2)),
+        prefixIcon: Icon(icon, color: const Color(0xffF2F2F2)),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xff303131)),
         ),
@@ -192,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
           borderSide: BorderSide(color: Colors.red, width: 2),
         ),
         filled: true,
-        fillColor: Color(0xff10100E),
+        fillColor: const Color(0xff10100E),
       ),
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
