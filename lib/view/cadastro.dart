@@ -11,11 +11,11 @@ class CadastroScreen extends StatefulWidget {
 }
 
 class _CadastroScreenState extends State<CadastroScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nomeController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _senhaController = TextEditingController();
-  final _confirmarSenhaController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
+  final TextEditingController _confirmarSenhaController = TextEditingController();
 
   final AuthController _authController = AuthController();
 
@@ -36,7 +36,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
 
       bool sucesso = _authController.registrar(
         _emailController.text,
-        _nomeController.text, 
+        _nomeController.text,
         _senhaController.text,
       );
 
@@ -44,18 +44,23 @@ class _CadastroScreenState extends State<CadastroScreen> {
 
       if (sucesso) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cadastro realizado com sucesso! Redirecionando para login...'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('Cadastro realizado com sucesso! Redirecionando para login...'),
+            backgroundColor: Colors.green,
+          ),
         );
-        Future.delayed(const Duration(seconds: 2), () {
+
+        Future<void>.delayed(const Duration(seconds: 2), () {
+          if (!mounted) return;
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) {
+                 return const LoginScreen(); 
+              }
+            ),
           );
         });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Falha no cadastro. E-mail ou nome de usuário já pode estar em uso.'), backgroundColor: Colors.red),
-        );
       }
     }
   }
@@ -80,7 +85,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: <Widget>[
                   Text(
                     'TuneTrail',
                     style: GoogleFonts.inter(
@@ -90,14 +95,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  _buildTextFormField('Nome', Icons.person_2_outlined, controller: _nomeController, validator: (value) {
+                  _buildTextFormField('Nome', Icons.person_2_outlined, controller: _nomeController, validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira seu nome.';
                     }
                     return null;
                   }),
                   const SizedBox(height: 20),
-                  _buildTextFormField('E-mail', Icons.email_outlined, controller: _emailController, keyboardType: TextInputType.emailAddress, validator: (value) {
+                  _buildTextFormField('E-mail', Icons.email_outlined, controller: _emailController, keyboardType: TextInputType.emailAddress, validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira seu e-mail.';
                     }
@@ -107,7 +112,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     return null;
                   }),
                   const SizedBox(height: 20),
-                  _buildTextFormField('Senha', Icons.lock_outlined, controller: _senhaController, isPassword: true, validator: (value) {
+                  _buildTextFormField('Senha', Icons.lock_outlined, controller: _senhaController, isPassword: true, validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira sua senha.';
                     }
@@ -117,7 +122,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     return null;
                   }),
                   const SizedBox(height: 20),
-                  _buildTextFormField('Confirmar Senha', Icons.lock_outlined, controller: _confirmarSenhaController, isPassword: true, validator: (value) {
+                  _buildTextFormField('Confirmar Senha', Icons.lock_outlined, controller: _confirmarSenhaController, isPassword: true, validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, confirme sua senha.';
                     }
