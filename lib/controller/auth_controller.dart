@@ -1,4 +1,5 @@
 import '../models/user.dart';
+import '../dao/user_dao.dart';
 
 class AuthController {
   static final AuthController _instancia = AuthController._internal();
@@ -9,14 +10,13 @@ class AuthController {
     return _instancia;
   }
 
-  final List<User> _usuarios = <User>[];
-
+  final UserDao _userDao = UserDao();
   User? _usuarioLogado;
 
   User? get usuarioLogado => _usuarioLogado;
 
   bool login(String identificador, String senha) {
-    for (User user in _usuarios) {
+    for (User user in _userDao.listar) {
       if (identificador == user.email || identificador == user.username) {
         return user.validarSenha(senha);
       }
@@ -24,22 +24,20 @@ class AuthController {
     return false;
   }
 
-  bool registrar(String email, String username, String senha) {   
-    bool existe = _usuarios.any(
-      (User u) => u.email == email || u.username == username,
-    );
-
-    if (existe) return false;
-
+  bool registrar(String nome, String dataNasc, String genero, String email, String username, String senha) {
     final User novoUsuario = User(
+      nome: nome, 
+      dataNasc: dataNasc,
+      genero: genero,
       email: email,
       username: username,
       senha: senha,
     );
-
-    _usuarios.add(novoUsuario);
-    _usuarioLogado = novoUsuario;
-    return true;
+    bool cadastrou = _userDao.cadastrar(novoUsuario);
+    if (cadastrou) {
+      _usuarioLogado = novoUsuario;
+    }
+    return cadastrou;
   }
 
   void logout() {
