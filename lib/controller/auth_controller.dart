@@ -1,6 +1,14 @@
 import '../models/user.dart';
 
 class AuthController {
+  static final AuthController _instancia = AuthController._internal();
+
+  AuthController._internal();
+
+  factory AuthController() {
+    return _instancia;
+  }
+
   final List<User> _usuarios = <User>[];
 
   User? _usuarioLogado;
