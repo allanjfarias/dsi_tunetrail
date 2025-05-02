@@ -11,9 +11,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _senhaController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
 
   final AuthController _authController = AuthController();
 
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  _buildTextFormField('E-mail', Icons.mail, controller: _emailController, keyboardType: TextInputType.emailAddress, validator: (value) {
+                  _buildTextFormField('E-mail', Icons.mail, controller: _emailController, keyboardType: TextInputType.emailAddress, validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira seu e-mail.';
                     }
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   }),
                   const SizedBox(height: 20),
-                  _buildTextFormField('Senha', Icons.lock, controller: _senhaController, isPassword: true, validator: (value) {
+                  _buildTextFormField('Senha', Icons.lock, controller: _senhaController, isPassword: true, validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira sua senha.';
                     }
@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: <Widget>[
                       const Text(
                         'Não tem uma conta? ',
                         style: TextStyle(color: Color(0xffF2F2F2)),
@@ -131,9 +131,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            PageRouteBuilder(
-                              pageBuilder: (_, animation, secondaryAnimation) => CadastroScreen(),
-                              transitionsBuilder: (_, animation, secondaryAnimation, child) {
+                            PageRouteBuilder<dynamic>(
+                              pageBuilder: (_, Animation<double> animation, Animation<double> secondaryAnimation) => CadastroScreen(),
+                              transitionsBuilder: (_, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
                                 return SlideTransition(
                                   position: Tween<Offset>(
                                     begin: const Offset(1.0, 0.0),
