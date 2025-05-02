@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
+import '../controller/validation_controller.dart';
 import 'login.dart'; 
 
 class CadastroScreen extends StatefulWidget {
@@ -61,6 +62,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
             ),
           );
         });
+      } else {
+        // Adiciona feedback caso o registro falhe (ex: email já existe)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Falha no cadastro. Verifique os dados ou tente um e-mail/nome de usuário diferente.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -95,42 +104,17 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  _buildTextFormField('Nome', Icons.person_2_outlined, controller: _nomeController, validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira seu nome.';
-                    }
-                    return null;
-                  }),
+                  // Usa o ValidationController para validar o nome
+                  _buildTextFormField('Nome', Icons.person_2_outlined, controller: _nomeController, validator: ValidationController.validateNome),
                   const SizedBox(height: 20),
-                  _buildTextFormField('E-mail', Icons.email_outlined, controller: _emailController, keyboardType: TextInputType.emailAddress, validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira seu e-mail.';
-                    }
-                    if (!value.contains('@') || !value.contains('.')) {
-                      return 'Por favor, insira um e-mail válido.';
-                    }
-                    return null;
-                  }),
+                  // Usa o ValidationController para validar o e-mail
+                  _buildTextFormField('E-mail', Icons.email_outlined, controller: _emailController, keyboardType: TextInputType.emailAddress, validator: ValidationController.validateEmail),
                   const SizedBox(height: 20),
-                  _buildTextFormField('Senha', Icons.lock_outlined, controller: _senhaController, isPassword: true, validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira sua senha.';
-                    }
-                    if (value.length < 6) {
-                      return 'A senha deve ter pelo menos 6 caracteres.';
-                    }
-                    return null;
-                  }),
+                  // Usa o ValidationController para validar a senha
+                  _buildTextFormField('Senha', Icons.lock_outlined, controller: _senhaController, isPassword: true, validator: ValidationController.validateSenha),
                   const SizedBox(height: 20),
-                  _buildTextFormField('Confirmar Senha', Icons.lock_outlined, controller: _confirmarSenhaController, isPassword: true, validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, confirme sua senha.';
-                    }
-                    if (value != _senhaController.text) {
-                      return 'As senhas não coincidem.';
-                    }
-                    return null;
-                  }),
+                  // Usa o ValidationController para validar a confirmação de senha
+                  _buildTextFormField('Confirmar Senha', Icons.lock_outlined, controller: _confirmarSenhaController, isPassword: true, validator: (String? value) => ValidationController.validateConfirmarSenha(value, _senhaController.text)),
                   const SizedBox(height: 30),
                   const Divider(color: Colors.blueAccent, height: 30),
                   const SizedBox(height: 20),
@@ -209,3 +193,4 @@ class _CadastroScreenState extends State<CadastroScreen> {
     );
   }
 }
+
