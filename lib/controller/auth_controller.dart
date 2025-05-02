@@ -16,13 +16,12 @@ class AuthController {
     return false;
   }
 
-  bool registro(String email, String username, String senha) {  
-    
-    for (User user in _usuarios) {
-      if (user.email == email || user.username == username) {
-        return false;
-      }
-    }
+  bool registrar(String email, String username, String senha) {   
+    bool existe = _usuarios.any(
+      (User u) => u.email == email || u.username == username,
+    );
+
+    if (existe) return false;
 
     final User novoUsuario = User(
       email: email,
