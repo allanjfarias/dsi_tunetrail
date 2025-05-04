@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'cadastro.dart';
 import '../controller/auth_controller.dart';
 import 'home_screen.dart';
@@ -27,7 +26,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      final ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+      final ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(
+        context,
+      );
       final NavigatorState navigator = Navigator.of(context);
 
       scaffoldMessenger.showSnackBar(
@@ -43,20 +44,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (sucesso) {
         scaffoldMessenger.showSnackBar(
-          const SnackBar(content: Text('Login bem-sucedido!'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('Login bem-sucedido!'),
+            backgroundColor: Colors.green,
+          ),
         );
         if (mounted) {
           navigator.pushReplacement(
-            MaterialPageRoute<void>(builder: (BuildContext context) => const HomeScreen()),
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => const HomeScreen(),
+            ),
           );
         }
       } else {
         scaffoldMessenger.showSnackBar(
-          const SnackBar(content: Text('Falha no login. Verifique seu e-mail e senha.'), backgroundColor: Colors.red),
+          const SnackBar(
+            content: Text('Falha no login. Verifique seu e-mail e senha.'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,62 +80,79 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    'TuneTrail',
-                    style: GoogleFonts.inter(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xff247FFF),
-                    ),
+                  Image.asset(
+                    'lib/assets/tunetrail_banner.png',
+                    width: 600,
+                    height: 300,
                   ),
-                  const SizedBox(height: 40),
-                  _buildTextFormField('E-mail', Icons.mail, controller: _emailController, keyboardType: TextInputType.emailAddress, validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira seu e-mail.';
-                    }
-                    if (!value.contains('@') || !value.contains('.')) {
-                       return 'Por favor, insira um e-mail válido.';
-                    }
-                    return null;
-                  }),
+
+                  _buildTextFormField(
+                    'E-mail',
+                    Icons.mail,
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, insira seu e-mail.';
+                      }
+                      if (!value.contains('@') || !value.contains('.')) {
+                        return 'Por favor, insira um e-mail válido.';
+                      }
+                      return null;
+                    },
+                  ),
                   const SizedBox(height: 20),
-                  _buildTextFormField('Senha', Icons.lock, controller: _senhaController, isPassword: true, validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira sua senha.';
-                    }
-                    return null;
-                  }),
-                  const SizedBox(height: 30),
+                  _buildTextFormField(
+                    'Senha',
+                    Icons.lock,
+                    controller: _senhaController,
+                    isPassword: true,
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, insira sua senha.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _handleLogin,
                       style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          backgroundColor: const Color(0xff347FFF)),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: const Color(0xff347FFF),
+                      ),
                       child: const Text(
                         'Entrar',
-                        style: TextStyle(color: Color(0xffF2F2F2), fontSize: 18),
+                        style: TextStyle(
+                          color: Color(0xffF2F2F2),
+                          fontSize: 18,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 20),
                   TextButton(
                     onPressed: () {
                       // TODO: Navegar para a tela de recuperação de senha
-                       ScaffoldMessenger.of(context).showSnackBar(
-                         const SnackBar(content: Text('Funcionalidade "Esqueci minha senha" não implementada.')),
-                       );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Funcionalidade "Esqueci minha senha" não implementada.',
+                          ),
+                        ),
+                      );
                     },
                     child: const Text(
                       'Esqueci minha senha',
                       style: TextStyle(color: Color(0xffF2F2F2)),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -138,20 +165,37 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.push(
                             context,
                             PageRouteBuilder<dynamic>(
-                              pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) => const CadastroScreen(),
-                              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                              pageBuilder:
+                                  (
+                                    BuildContext context,
+                                    Animation<double> animation,
+                                    Animation<double> secondaryAnimation,
+                                  ) => const CadastroScreen(),
+                              transitionsBuilder: (
+                                BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                                Widget child,
+                              ) {
                                 return SlideTransition(
                                   position: Tween<Offset>(
                                     begin: const Offset(1.0, 0.0),
                                     end: Offset.zero,
-                                  ).animate(CurvedAnimation(
-                                    parent: animation,
-                                    curve: Curves.easeInOutQuint,
-                                  )),
-                                  child: FadeTransition(opacity: animation, child: child),
+                                  ).animate(
+                                    CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeInOutQuint,
+                                    ),
+                                  ),
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
                                 );
                               },
-                              transitionDuration: const Duration(milliseconds: 500),
+                              transitionDuration: const Duration(
+                                milliseconds: 500,
+                              ),
                             ),
                           );
                         },
@@ -165,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
@@ -175,7 +219,14 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildTextFormField(String label, IconData icon, {bool isPassword = false, TextEditingController? controller, String? Function(String?)? validator, TextInputType? keyboardType}) {
+  Widget _buildTextFormField(
+    String label,
+    IconData icon, {
+    bool isPassword = false,
+    TextEditingController? controller,
+    String? Function(String?)? validator,
+    TextInputType? keyboardType,
+  }) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
@@ -191,7 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white),
         ),
-         errorBorder: const OutlineInputBorder(
+        errorBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.red, width: 1),
         ),
         focusedErrorBorder: const OutlineInputBorder(

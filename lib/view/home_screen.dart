@@ -8,73 +8,73 @@ class HomeScreen extends StatelessWidget {
   static const List<Map<String, String>> _eventosData = <Map<String, String>>[
     <String, String>{
       'title': 'Show de rock em Recife',
-      'image': 'assets/images/evento1.png'
+      'image': 'assets/images/evento1.png',
     },
     <String, String>{
       'title': 'Festival Jazz & Blues',
-      'image': 'assets/images/evento2.png'
+      'image': 'assets/images/evento2.png',
     },
     <String, String>{
       'title': 'Orquestra Sinfônica',
-      'image': 'assets/images/evento3.png'
+      'image': 'assets/images/evento3.png',
     },
     <String, String>{
       'title': 'Samba na lapa',
-       'image': 'assets/images/evento5.png'
-       },
+      'image': 'assets/images/evento5.png',
+    },
     <String, String>{
       'title': 'Show de sertanejo universitário',
-      'image': 'assets/images/evento6.png'
+      'image': 'assets/images/evento6.png',
     },
   ];
 
   static const List<Map<String, String>> _playlistsData = <Map<String, String>>[
     <String, String>{
       'title': 'Top Hits Brasil',
-      'image': 'assets/images/playlist1.png'
+      'image': 'assets/images/playlist1.png',
     },
     <String, String>{
       'title': 'Festa de aniversário',
-      'image': 'assets/images/playlist2.png'
+      'image': 'assets/images/playlist2.png',
     },
     <String, String>{
       'title': 'Sons da natureza',
-      'image': 'assets/images/playlist3.png'
+      'image': 'assets/images/playlist3.png',
     },
     <String, String>{
       'title': 'Treino Pesado',
-      'image': 'assets/images/playlist4.png'
+      'image': 'assets/images/playlist4.png',
     },
     <String, String>{
       'title': 'Clássicos Inesquecíveis',
-      'image': 'assets/images/playlist6.png'
+      'image': 'assets/images/playlist6.png',
     },
     <String, String>{
       'title': 'Eletrônica Pura',
-      'image': 'assets/images/playlist7.png'
+      'image': 'assets/images/playlist7.png',
     },
   ];
 
   static const List<Map<String, String>> _novidadesData = <Map<String, String>>[
     <String, String>{
       'title': 'Novo álbum: xxx de xxx',
-      'image': 'assets/images/novidade1.png'
+      'image': 'assets/images/novidade1.png',
     },
     <String, String>{
       'title': 'Novo single de X',
-      'image': 'assets/images/novidade2.png'
+      'image': 'assets/images/novidade2.png',
     },
     <String, String>{
       'title': 'Novo EP de X',
-      'image': 'assets/images/novidade3.png'
+      'image': 'assets/images/novidade3.png',
     },
     <String, String>{
       'title': 'Novo álbum ao vivo',
-      'image': 'assets/images/novidade4.png'
+      'image': 'assets/images/novidade4.png',
     },
     <String, String>{
       'title': 'Novo remix de X',
-      'image': 'assets/images/novidade5.png'
+      'image': 'assets/images/novidade5.png',
     },
   ];
 
@@ -107,17 +107,23 @@ class HomeScreen extends StatelessWidget {
           _buildSectionTitle('Eventos próximos'),
           const SizedBox(height: 12),
           _buildHorizontalCardList(
-              items: _eventosData, cardType: CardType.eventos),
+            items: _eventosData,
+            cardType: CardType.eventos,
+          ),
           const SizedBox(height: 24),
           _buildSectionTitle('Suas playlists'),
           const SizedBox(height: 12),
           _buildHorizontalCardList(
-              items: _playlistsData, cardType: CardType.playlists),
+            items: _playlistsData,
+            cardType: CardType.playlists,
+          ),
           const SizedBox(height: 24),
           _buildSectionTitle('Novidades'),
           const SizedBox(height: 12),
           _buildHorizontalCardList(
-              items: _novidadesData, cardType: CardType.novidades),
+            items: _novidadesData,
+            cardType: CardType.novidades,
+          ),
           const SizedBox(height: 24),
         ],
       ),
@@ -128,14 +134,8 @@ class HomeScreen extends StatelessWidget {
         unselectedItemColor: Colors.grey,
         currentIndex: 0,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Buscar',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Buscar'),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             label: 'Perfil',
@@ -163,14 +163,20 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalCardList(
-      {required List<Map<String, String>> items, required CardType cardType}) {
+  Widget _buildHorizontalCardList({
+    required List<Map<String, String>> items,
+    required CardType cardType,
+  }) {
     double cardHeight = 120;
     double cardWidth = 120;
-    double textSpaceHeight = 55;  // altura necessária pra o texto abaixo dos cards
+    double textSpaceHeight =
+        55; // altura necessária pra o texto abaixo dos cards
 
     return SizedBox(
-      height: cardType == CardType.eventos ? cardHeight : cardHeight + textSpaceHeight,
+      height:
+          cardType == CardType.eventos
+              ? cardHeight
+              : cardHeight + textSpaceHeight,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
@@ -187,31 +193,39 @@ class HomeScreen extends StatelessWidget {
                     width: cardWidth,
                     height: cardHeight,
                     decoration: BoxDecoration(
-                      color: cardType == CardType.eventos
-                          ? const Color(0xff247FFF)
-                          : const Color(0xff181818),
+                      color:
+                          cardType == CardType.eventos
+                              ? const Color(0xff247FFF)
+                              : const Color(0xff181818),
                       borderRadius: BorderRadius.circular(8.0),
-                      border: cardType != CardType.eventos
-                          ? Border.all(color: const Color(0xff303131), width: 1)
-                          : null,
+                      border:
+                          cardType != CardType.eventos
+                              ? Border.all(
+                                color: const Color(0xff303131),
+                                width: 1,
+                              )
+                              : null,
                     ),
                     child: Center(
-                      child: cardType == CardType.eventos
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                item['title'] ?? '',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.inter(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                      child:
+                          cardType == CardType.eventos
+                              ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
                                 ),
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            )
-                          : null,
+                                child: Text(
+                                  item['title'] ?? '',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )
+                              : null,
                     ),
                   ),
                   if (cardType != CardType.eventos)
@@ -237,8 +251,4 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-enum CardType {
-  eventos,
-  playlists,
-  novidades,
-}
+enum CardType { eventos, playlists, novidades }

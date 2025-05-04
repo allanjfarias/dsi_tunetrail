@@ -17,16 +17,23 @@ class AuthController {
 
   bool login(String identificador, String senha) {
     for (User user in _userDao.listar) {
-      if (identificador == user.email || identificador == user.username) {
+      if (identificador == user.email) {
         return user.validarSenha(senha);
       }
     }
     return false;
   }
 
-  bool registrar(String nome, String dataNasc, String genero, String email, String username, String senha) {
+  bool registrar(
+    String nome,
+    String dataNasc,
+    String genero,
+    String email,
+    String username,
+    String senha,
+  ) {
     final User novoUsuario = User(
-      nome: nome, 
+      nome: nome,
       dataNasc: dataNasc,
       genero: genero,
       email: email,
