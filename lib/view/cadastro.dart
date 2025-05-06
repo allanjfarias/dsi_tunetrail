@@ -16,7 +16,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _dataNascController = TextEditingController();
   final TextEditingController _generoController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _confirmarSenhaController =
@@ -29,7 +28,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
     _nomeController.dispose();
     _dataNascController.dispose();
     _generoController.dispose();
-    _usernameController.dispose();
     _emailController.dispose();
     _senhaController.dispose();
     _confirmarSenhaController.dispose();
@@ -47,8 +45,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
         _dataNascController.text,
         _generoController.text,
         _emailController.text,
-        _usernameController.text,
-        _senhaController.text,
+        _senhaController.text
       );
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -144,14 +141,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     <String>['Feminino', 'Masculino', 'Outro'],
                     _generoController,
                     ValidationController.validateGenero,
-                  ),
-                  const SizedBox(height: 20),
-                  // Usa o ValidationController para validar o nome de usuário
-                  _buildTextFormField(
-                    'Nome de usuário',
-                    Icons.person_2_outlined,
-                    controller: _usernameController,
-                    validator: ValidationController.validateUsername,
                   ),
                   const SizedBox(height: 20),
                   // Usa o ValidationController para validar o e-mail

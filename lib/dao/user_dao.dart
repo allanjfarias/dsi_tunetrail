@@ -14,8 +14,7 @@ class UserDao {
   bool cadastrar(User novoUsuario) {
     bool existe = _usuarios.any(
       (User u) =>
-          u.email == novoUsuario.email || u.username == novoUsuario.username,
-    );
+          u.email == novoUsuario.email);
 
     if (existe) return false;
 

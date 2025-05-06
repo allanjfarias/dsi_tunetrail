@@ -29,7 +29,6 @@ class AuthController {
     String dataNasc,
     String genero,
     String email,
-    String username,
     String senha,
   ) {
     final User novoUsuario = User(
@@ -37,7 +36,6 @@ class AuthController {
       dataNasc: dataNasc,
       genero: genero,
       email: email,
-      username: username,
       senha: senha,
     );
     bool cadastrou = _userDao.cadastrar(novoUsuario);

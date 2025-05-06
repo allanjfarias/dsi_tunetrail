@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        backgroundColor: const Color(0xff347FFF),
+                        backgroundColor: const Color(0xff247FFF),
                       ),
                       child: const Text(
                         'Entrar',
@@ -202,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text(
                           'Cadastre-se',
                           style: TextStyle(
-                            color: Color(0xff6CA0DC),
+                            color: Color(0xff247FFF),
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
                           ),
