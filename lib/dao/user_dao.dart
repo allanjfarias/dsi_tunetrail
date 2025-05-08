@@ -1,26 +1,26 @@
 import '../models/user.dart';
 
 class UserDao {
-    static final UserDao _instancia = UserDao._internal();
+  static final UserDao _instancia = UserDao._internal();
 
-    UserDao._internal();
+  UserDao._internal();
 
-    factory UserDao() {
-      return _instancia;
-    }
+  factory UserDao() {
+    return _instancia;
+  }
 
-    final List<User> _usuarios = <User>[];
+  final List<User> _usuarios = <User>[];
 
-    bool cadastrar(User novoUsuario) {   
-      bool existe = _usuarios.any(
-        (User u) => u.email == novoUsuario.email || u.username == novoUsuario.username,
-      );
+  bool cadastrar(User novoUsuario) {
+    bool existe = _usuarios.any(
+      (User u) =>
+          u.email == novoUsuario.email);
 
-      if (existe) return false;
+    if (existe) return false;
 
-      _usuarios.add(novoUsuario);
-      return true;
-    }
+    _usuarios.add(novoUsuario);
+    return true;
+  }
 
-    List<User> get listar => List<User>.from(_usuarios);
+  List<User> get listar => List<User>.from(_usuarios);
 }
