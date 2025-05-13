@@ -81,20 +81,20 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff0A0A0A),
+      backgroundColor: const Color(0xFF202022),
       appBar: AppBar(
         backgroundColor: const Color(0xff0A0A0A),
         elevation: 0,
         title: Row(
           children: <Widget>[
-            const Icon(Icons.music_note, color: Color(0xff247FFF)),
+            const Icon(Icons.music_note, color: Color(0xFF34B3F1)),
             const SizedBox(width: 2),
             Text(
               'TuneTrail',
               style: GoogleFonts.inter(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xff247FFF),
+                color: const Color(0xFF34B3F1),
               ),
             ),
           ],
@@ -128,9 +128,9 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xff0A0A0A),
+        backgroundColor: const Color(0xFF202022),
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xff247FFF),
+        selectedItemColor: const Color(0xFF34B3F1),
         unselectedItemColor: Colors.grey,
         currentIndex: 0,
         items: const <BottomNavigationBarItem>[
@@ -158,7 +158,7 @@ class HomeScreen extends StatelessWidget {
       style: GoogleFonts.inter(
         fontSize: 18,
         fontWeight: FontWeight.w600,
-        color: Colors.white,
+        color: Color(0xffF2F2F2),
       ),
     );
   }
@@ -195,13 +195,13 @@ class HomeScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color:
                           cardType == CardType.eventos
-                              ? const Color(0xff247FFF)
-                              : const Color(0xff181818),
+                              ? const Color(0xFF34B3F1)
+                              : const Color(0xFF202022),
                       borderRadius: BorderRadius.circular(8.0),
                       border:
                           cardType != CardType.eventos
                               ? Border.all(
-                                color: const Color(0xff303131),
+                                color: const Color(0xFF878787),
                                 width: 1,
                               )
                               : null,

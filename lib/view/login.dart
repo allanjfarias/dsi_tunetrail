@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: const Color(0xff0A0A0A),
+        color: const Color(0xFF202022),
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Image.asset(
                     'lib/assets/tunetrail_banner.png',
                     width: 600,
-                    height: 300,
+                    height: 320,
                   ),
 
                   _buildTextFormField(
@@ -124,13 +124,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        backgroundColor: const Color(0xff247FFF),
+                        backgroundColor: const Color(0xFF34B3F1),
+                        elevation: 2,
                       ),
                       child: const Text(
                         'Entrar',
                         style: TextStyle(
-                          color: Color(0xffF2F2F2),
+                          color: Color(0xFFFFFFFF),
                           fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -149,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: const Text(
                       'Esqueci minha senha',
-                      style: TextStyle(color: Color(0xffF2F2F2)),
+                      style: TextStyle(color: Color(0xFF34B3F1)),
                     ),
                   ),
                   const SizedBox(height: 0),
@@ -202,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text(
                           'Cadastre-se',
                           style: TextStyle(
-                            color: Color(0xff247FFF),
+                            color: Color(0xFF34B3F1),
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
                           ),
@@ -231,25 +233,32 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
+        labelStyle: const TextStyle(
+          color: Color(0xffF2F2F2),
+          fontWeight: FontWeight.bold,
+        ),
         prefixIcon: Icon(icon, color: const Color(0xffF2F2F2)),
+        errorStyle: const TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xff303131)),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: BorderSide(color: Color(0xFF34B3F1)),
         ),
         errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1),
+          borderSide: BorderSide(color: Colors.red, width: 2),
         ),
         focusedErrorBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.red, width: 2),
         ),
         filled: true,
-        fillColor: const Color(0xff10100E),
+        fillColor: const Color.fromARGB(255, 102, 102, 102),
       ),
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
