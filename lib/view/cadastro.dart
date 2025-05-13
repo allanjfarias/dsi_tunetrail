@@ -45,7 +45,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
         _dataNascController.text,
         _generoController.text,
         _emailController.text,
-        _senhaController.text
+        _senhaController.text,
       );
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -90,14 +90,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color(0xff247FFF)),
+          icon: Icon(Icons.arrow_back, color: Color(0xFF34B3F1)),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: Color(0xff0A0A0A),
+        backgroundColor: Color(0xFF202022),
         elevation: 0,
       ),
       body: Container(
-        color: const Color(0xff0A0A0A),
+        color: const Color(0xFF202022),
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -111,7 +111,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xff247FFF),
+                      color: Color(0xFF34B3F1),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -175,14 +175,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
                             ),
                   ),
                   const SizedBox(height: 30),
-                  const Divider(color: Colors.blueAccent, height: 30),
+                  const Divider(color: Color(0xFF34B3F1), height: 30),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _handleCadastro,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xff247FFF),
+                        backgroundColor: Color(0xFF34B3F1),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -206,7 +206,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     child: Text(
                       'Já tem uma conta? Faça login',
                       style: GoogleFonts.inter(
-                        color: Color(0xff247FFF),
+                        color: Color(0xFF34B3F1),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -232,7 +232,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
       controller: controller,
       obscureText: isPassword,
       style: const TextStyle(color: Color(0xffF2F2F2)),
-      cursorColor: Color(0xff6CA0DC),
+      cursorColor: Color(0xFF34B3F1),
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
@@ -251,7 +251,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
           borderSide: BorderSide(color: Colors.red, width: 2),
         ),
         filled: true,
-        fillColor: Color(0xff10100E),
+        fillColor: Color.fromARGB(255, 102, 102, 102),
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,
@@ -284,10 +284,13 @@ class _CadastroScreenState extends State<CadastroScreen> {
           borderSide: BorderSide(color: Colors.red, width: 1),
         ),
         focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(
+            color: Color.fromARGB(255, 11, 11, 11),
+            width: 2,
+          ),
         ),
         filled: true,
-        fillColor: Color(0xff10100E),
+        fillColor: Color.fromARGB(255, 102, 102, 102),
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,
@@ -295,7 +298,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
       ),
       value: controller.text.isEmpty ? null : controller.text,
       icon: const Icon(Icons.arrow_drop_down, color: Color(0xffF2F2F2)),
-      dropdownColor: Color(0xff10100E),
+      dropdownColor: Color.fromARGB(255, 102, 102, 102),
       style: const TextStyle(color: Color(0xffF2F2F2)),
       onChanged: (String? value) {
         controller.text = value ?? '';
