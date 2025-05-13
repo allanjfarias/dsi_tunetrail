@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  // dados de exemplo para os carrosséis
   static const List<Map<String, String>> _eventosData = <Map<String, String>>[
     <String, String>{
       'title': 'Show de rock em Recife',
@@ -80,47 +78,51 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xff0A0A0A),
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: const Color(0xff0A0A0A),
+        backgroundColor: theme.colorScheme.primary,
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: Row(
           children: <Widget>[
-            const Icon(Icons.music_note, color: Color(0xff247FFF)),
+            Icon(Icons.music_note, color: theme.colorScheme.primary),
             const SizedBox(width: 2),
             Text(
               'TuneTrail',
-              style: GoogleFonts.inter(
-                fontSize: 24,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xff247FFF),
               ),
             ),
           ],
         ),
-        automaticallyImplyLeading: false,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         children: <Widget>[
-          _buildSectionTitle('Eventos próximos'),
+          _buildSectionTitle(context, 'Eventos próximos'),
           const SizedBox(height: 12),
           _buildHorizontalCardList(
+            context,
             items: _eventosData,
             cardType: CardType.eventos,
           ),
           const SizedBox(height: 24),
-          _buildSectionTitle('Suas playlists'),
+          _buildSectionTitle(context, 'Suas playlists'),
           const SizedBox(height: 12),
           _buildHorizontalCardList(
+            context,
             items: _playlistsData,
             cardType: CardType.playlists,
           ),
           const SizedBox(height: 24),
-          _buildSectionTitle('Novidades'),
+          _buildSectionTitle(context, 'Novidades'),
           const SizedBox(height: 12),
           _buildHorizontalCardList(
+            context,
             items: _novidadesData,
             cardType: CardType.novidades,
           ),
@@ -128,9 +130,9 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xff0A0A0A),
+        backgroundColor: theme.colorScheme.surface,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xff247FFF),
+        selectedItemColor: theme.colorScheme.primary,
         unselectedItemColor: Colors.grey,
         currentIndex: 0,
         items: const <BottomNavigationBarItem>[
@@ -146,31 +148,32 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
         onTap: (int index) {
-          // TODO: Lógica para navegação ou ação ao clicar nos itens
+          // TODO: navegação
         },
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    final ThemeData theme = Theme.of(context);
     return Text(
       title,
-      style: GoogleFonts.inter(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
+      style: theme.textTheme.titleMedium?.copyWith(
         color: Colors.white,
+        fontWeight: FontWeight.w600,
       ),
     );
   }
 
-  Widget _buildHorizontalCardList({
+  Widget _buildHorizontalCardList(
+    BuildContext context, {
     required List<Map<String, String>> items,
     required CardType cardType,
   }) {
-    double cardHeight = 120;
-    double cardWidth = 120;
-    double textSpaceHeight =
-        55; // altura necessária pra o texto abaixo dos cards
+    final ThemeData theme = Theme.of(context);
+    const double cardHeight = 120;
+    const double cardWidth = 120;
+    const double textSpaceHeight = 55;
 
     return SizedBox(
       height:
@@ -183,7 +186,7 @@ class HomeScreen extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           final Map<String, String> item = items[index];
           return Padding(
-            padding: const EdgeInsets.only(right: 12.0),
+            padding: const EdgeInsets.only(right: 12),
             child: SizedBox(
               width: cardWidth,
               child: Column(
@@ -195,9 +198,9 @@ class HomeScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color:
                           cardType == CardType.eventos
-                              ? const Color(0xff247FFF)
+                              ? theme.colorScheme.primary
                               : const Color(0xff181818),
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(8),
                       border:
                           cardType != CardType.eventos
                               ? Border.all(
@@ -206,39 +209,42 @@ class HomeScreen extends StatelessWidget {
                               )
                               : null,
                     ),
-                    child: Center(
-                      child:
-                          cardType == CardType.eventos
-                              ? Padding(
+                    child:
+                        cardType == CardType.eventos
+                            ? Center(
+                              child: Padding(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0,
+                                  horizontal: 8,
                                 ),
                                 child: Text(
                                   item['title'] ?? '',
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14,
                                   ),
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              )
-                              : null,
-                    ),
+                              ),
+                            )
+                            : Image.asset(
+                              item['image'] ?? '',
+                              fit: BoxFit.cover,
+                            ),
                   ),
                   if (cardType != CardType.eventos)
                     Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
+                      padding: const EdgeInsets.only(top: 8),
                       child: Text(
                         item['title'] ?? 'Nome ${index + 1}',
-                        style: GoogleFonts.inter(
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 14,
                           color: Colors.grey[400],
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                 ],

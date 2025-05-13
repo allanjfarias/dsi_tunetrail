@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
 import 'login.dart';
@@ -45,7 +44,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
         _dataNascController.text,
         _generoController.text,
         _emailController.text,
-        _senhaController.text
+        _senhaController.text,
       );
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -60,7 +59,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
           ),
         );
 
-        Future<void>.delayed(const Duration(seconds: 2), () {
+        Future<void>.delayed(const Duration(seconds: 2), () async {
           if (!mounted) return;
           Navigator.pushReplacement(
             context,
@@ -72,7 +71,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
           );
         });
       } else {
-        // Adiciona feedback caso o registro falhe (ex: email já existe)
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -90,14 +88,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color(0xff247FFF)),
+          icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: Color(0xff0A0A0A),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
       ),
       body: Container(
-        color: const Color(0xff0A0A0A),
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -108,14 +106,11 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 children: <Widget>[
                   Text(
                     'TuneTrail',
-                    style: GoogleFonts.inter(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff247FFF),
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                   const SizedBox(height: 40),
-                  // Usa o ValidationController para validar o nome
                   _buildTextFormField(
                     'Nome',
                     Icons.person_3_outlined,
@@ -123,7 +118,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     validator: ValidationController.validateNome,
                   ),
                   const SizedBox(height: 20),
-                  // Usa o ValidationController para validar a data de nascimento
                   _buildTextFormField(
                     'Data de nascimento',
                     Icons.calendar_month,
@@ -132,9 +126,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     validator: ValidationController.validateDatanasc,
                   ),
                   const SizedBox(height: 20),
-                  // Usa o ValidationController para validar o genero
-                  //_buildTextFormField('Genero', Icons.person_2_outlined, controller: _generoController, validator: ValidationController.validateGenero),
-                  //const SizedBox(height: 20),
                   _buildDropdownFormField(
                     'Gênero',
                     Icons.person_outline,
@@ -143,7 +134,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     ValidationController.validateGenero,
                   ),
                   const SizedBox(height: 20),
-                  // Usa o ValidationController para validar o e-mail
                   _buildTextFormField(
                     'E-mail',
                     Icons.email_outlined,
@@ -152,7 +142,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     validator: ValidationController.validateEmail,
                   ),
                   const SizedBox(height: 20),
-                  // Usa o ValidationController para validar a senha
                   _buildTextFormField(
                     'Senha',
                     Icons.lock_outlined,
@@ -161,7 +150,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     validator: ValidationController.validateSenha,
                   ),
                   const SizedBox(height: 20),
-                  // Usa o ValidationController para validar a confirmação de senha
                   _buildTextFormField(
                     'Confirmar Senha',
                     Icons.lock_outlined,
@@ -181,21 +169,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _handleCadastro,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xff247FFF),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        'Criar usuário',
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xffF2F2F2),
-                        ),
-                      ),
+                      child: Text('Criar usuário'),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -203,13 +177,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text(
-                      'Já tem uma conta? Faça login',
-                      style: GoogleFonts.inter(
-                        color: Color(0xff247FFF),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    child: Text('Já tem uma conta? Faça login'),
                   ),
                 ],
               ),
@@ -231,17 +199,19 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      style: const TextStyle(color: Color(0xffF2F2F2)),
-      cursorColor: Color(0xff6CA0DC),
+      style: Theme.of(context).textTheme.bodyLarge,
+      cursorColor: Theme.of(context).primaryColor,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: Color(0xffF2F2F2)),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xff303131)),
+        labelStyle: Theme.of(context).textTheme.bodyLarge,
+        prefixIcon: Icon(icon),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
         ),
-        focusedBorder: const OutlineInputBorder(
+        focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white, width: 2),
         ),
         errorBorder: const OutlineInputBorder(
@@ -251,7 +221,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
           borderSide: BorderSide(color: Colors.red, width: 2),
         ),
         filled: true,
-        fillColor: Color(0xff10100E),
+        fillColor: Theme.of(context).inputDecorationTheme.fillColor,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,
@@ -272,12 +242,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: Color(0xffF2F2F2)),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xff303131)),
+        labelStyle: Theme.of(context).textTheme.bodyLarge,
+        prefixIcon: Icon(icon),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
         ),
-        focusedBorder: const OutlineInputBorder(
+        focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white, width: 2),
         ),
         errorBorder: const OutlineInputBorder(
@@ -287,28 +259,22 @@ class _CadastroScreenState extends State<CadastroScreen> {
           borderSide: BorderSide(color: Colors.red, width: 2),
         ),
         filled: true,
-        fillColor: Color(0xff10100E),
+        fillColor: Theme.of(context).inputDecorationTheme.fillColor,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,
         ),
       ),
       value: controller.text.isEmpty ? null : controller.text,
-      icon: const Icon(Icons.arrow_drop_down, color: Color(0xffF2F2F2)),
-      dropdownColor: Color(0xff10100E),
-      style: const TextStyle(color: Color(0xffF2F2F2)),
+      icon: Icon(Icons.arrow_drop_down),
+      dropdownColor: Theme.of(context).inputDecorationTheme.fillColor,
+      style: Theme.of(context).textTheme.bodyLarge,
       onChanged: (String? value) {
         controller.text = value ?? '';
       },
       items:
           items.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: const TextStyle(color: Color(0xffF2F2F2)),
-              ),
-            );
+            return DropdownMenuItem<String>(value: value, child: Text(value));
           }).toList(),
       validator: validator,
     );
