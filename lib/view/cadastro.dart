@@ -34,20 +34,20 @@ class _CadastroScreenState extends State<CadastroScreen> {
     super.dispose();
   }
 
-  void _handleCadastro() {
+  void _handleCadastro() async{
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Processando cadastro...')));
 
-      bool sucesso = _authController.registrar(
+      bool sucesso = await _authController.registrar(
         _nomeController.text,
         _dataNascController.text,
         _generoController.text,
         _emailController.text,
         _senhaController.text,
       );
-
+      if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
       if (sucesso) {

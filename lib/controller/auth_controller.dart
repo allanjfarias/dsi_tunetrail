@@ -1,8 +1,15 @@
-import '../models/user.dart';
-import '../dao/user_dao.dart';
+import '../models/user.dart' as local_user;
+import '../models/profile.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 
 class AuthController {
   static final AuthController _instancia = AuthController._internal();
+  final String supabaseUrl = dotenv.env['SUPABASE_URL']!; 
+
 
   AuthController._internal();
 
@@ -10,77 +17,110 @@ class AuthController {
     return _instancia;
   }
 
-  final UserDao _userDao = UserDao();
-  User? _usuarioLogado;
-  String? _emailRedefinicaoSenha;
-  String? _codigoRedefinicaoSenha;
+  local_user.User? _usuarioLogado;
+  local_user.User? get usuarioLogado => _usuarioLogado;
 
-  User? get usuarioLogado => _usuarioLogado;
+  /// Login com Supabase Auth
+  Future<bool> login(String email, String senha) async {
+    try {
+      final supa.AuthResponse res = await supa.Supabase.instance.client.auth
+          .signInWithPassword(email: email, password: senha);
 
-  bool login(String identificador, String senha) {
-    for (User user in _userDao.listar) {
-      if (identificador == user.email) {
-        return user.validarSenha(senha);
+      final supa.User? sessionUser = res.user;
+      if (sessionUser != null) {
+        _usuarioLogado = local_user.User(
+          id: sessionUser.id,
+          email: sessionUser.email ?? '',
+        );
+        return true;
       }
+
+      return false;
+    } catch (e) {
+      return false;
     }
-    return false;
   }
 
-  bool registrar(
+  /// Registro no Supabase (Auth + tabela profile)
+  Future<bool> registrar(
     String nome,
     String dataNasc,
     String genero,
     String email,
     String senha,
-  ) {
-    final User novoUsuario = User(
-      nome: nome,
-      dataNasc: dataNasc,
-      genero: genero,
-      email: email,
-      senha: senha,
-    );
-    bool cadastrou = _userDao.cadastrar(novoUsuario);
-    if (cadastrou) {
-      _usuarioLogado = novoUsuario;
+  ) async {
+    try {
+      final supa.AuthResponse res = await supa.Supabase.instance.client.auth
+          .signUp(email: email, password: senha);
+
+      final supa.User? newUser = res.user;
+
+      if (newUser == null) return false;
+
+      // Salva os dados do perfil na tabela 'profiles'
+      final Profile profile = Profile.fromStringDate(
+        nome: nome,
+        dataNascString: dataNasc,
+        genero: genero,
+      );
+
+      await supa.Supabase.instance.client.from('profiles').insert(
+        <String, dynamic>{'id': newUser.id, ...profile.toMap()},
+      );
+
+      _usuarioLogado = local_user.User(
+        id: newUser.id,
+        email: newUser.email ?? '',
+      );
+      return true;
+    } catch (e) {
+      return false;
     }
-    return cadastrou;
-  }
-
-  String gerarCodigo() {
-    //TODO: Gerar código de forma aleatória quando for mandar para o e-mail. Retornando valor fixo para testes
-    return 'A12B34';
-  }
-
-  bool _enviarCodigoPorEmail(String email) {
-    _codigoRedefinicaoSenha = gerarCodigo();
-    //TODO: Enviar de fato o email com o código e retornar true se tudo der certo
-    return true;
-  }
-
-  String emailRedefinicao (String email) {
-    if (_userDao.email_cadastrado(email)) {
-      _emailRedefinicaoSenha = email;
-      if (_enviarCodigoPorEmail(email)) {
-        return '';
-      }
-      return 'Erro ao enviar o código por e-mail. Tente novamente.';
-    }
-    return 'O e-mail informado não está cadastrado.';
-  }
-
-  String verificarCodigo (String codigo) {
-    if (codigo == _codigoRedefinicaoSenha) {
-      return '';
-    }
-    return 'Código inválido.';
-  }
-
-  bool alterarSenha (String novaSenha) {
-    return _userDao.alterarSenha(_emailRedefinicaoSenha!, novaSenha);
   }
 
   void logout() {
     _usuarioLogado = null;
+  }
+
+  Future<String?> enviarEmailRedefinicao(String email) async {
+    try {
+      await supa.Supabase.instance.client.auth.resetPasswordForEmail(
+        email,
+        redirectTo: 'tunetrail://reset-password',
+        
+        // Opcional: configure seu deep link aqui se usar
+        // redirectTo: 'yourapp://reset-password',
+      );
+      return null; // Sucesso, sem erro
+    } catch (e) {
+      return e.toString(); // Mensagem de erro para exibir
+    }
+  }
+
+  Future<bool> alterarSenhaComToken({
+    required String novaSenha,
+    required String accessToken,
+  }) async {
+    final Uri url = Uri.parse('${supabaseUrl.replaceAll(RegExp(r'/+$'), '')}/auth/v1/user');
+
+
+    try {
+      final http.Response response = await http.put(
+        url,
+        headers: <String, String> {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: jsonEncode(<String, String> {'password': novaSenha}),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 }
