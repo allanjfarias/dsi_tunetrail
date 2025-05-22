@@ -23,4 +23,18 @@ class UserDao {
   }
 
   List<User> get listar => List<User>.from(_usuarios);
+
+  bool email_cadastrado(String email) {
+    return _usuarios.any((User usuario) => usuario.email == email);
+  }
+
+  bool alterarSenha(String emailUsuario, String novaSenha) {
+    try {
+      User usuario = _usuarios.firstWhere((User usuario) => usuario.email == emailUsuario);
+      usuario.alterarSenha(novaSenha);
+      return true;
+    } catch (e) {
+      return false; // Retorna false se o usuário não for encontrado
+    }
+  }
 }
