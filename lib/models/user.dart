@@ -1,11 +1,11 @@
 import 'package:intl/intl.dart';
 
 class User {
-  final String _nome;
-  final DateTime _dataNasc;
-  final String _genero;
+  String _nome;
+  DateTime _dataNasc;
+  String _genero;
   final String _email;
-  final String _senha;
+  String _senha;
 
   User({
     required String nome,
@@ -27,6 +27,10 @@ class User {
 
   bool validarSenha(String tentativa) {
     return tentativa == _senha;
+  }
+
+  void alterarSenha(String novaSenha) {
+    _senha = novaSenha;
   }
 
   // Função para calcular a idade

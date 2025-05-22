@@ -12,6 +12,8 @@ class AuthController {
 
   final UserDao _userDao = UserDao();
   User? _usuarioLogado;
+  String? _emailRedefinicaoSenha;
+  String? _codigoRedefinicaoSenha;
 
   User? get usuarioLogado => _usuarioLogado;
 
@@ -43,6 +45,39 @@ class AuthController {
       _usuarioLogado = novoUsuario;
     }
     return cadastrou;
+  }
+
+  String gerarCodigo() {
+    //TODO: Gerar código de forma aleatória quando for mandar para o e-mail. Retornando valor fixo para testes
+    return 'A12B34';
+  }
+
+  bool _enviarCodigoPorEmail(String email) {
+    _codigoRedefinicaoSenha = gerarCodigo();
+    //TODO: Enviar de fato o email com o código e retornar true se tudo der certo
+    return true;
+  }
+
+  String emailRedefinicao (String email) {
+    if (_userDao.email_cadastrado(email)) {
+      _emailRedefinicaoSenha = email;
+      if (_enviarCodigoPorEmail(email)) {
+        return '';
+      }
+      return 'Erro ao enviar o código por e-mail. Tente novamente.';
+    }
+    return 'O e-mail informado não está cadastrado.';
+  }
+
+  String verificarCodigo (String codigo) {
+    if (codigo == _codigoRedefinicaoSenha) {
+      return '';
+    }
+    return 'Código inválido.';
+  }
+
+  bool alterarSenha (String novaSenha) {
+    return _userDao.alterarSenha(_emailRedefinicaoSenha!, novaSenha);
   }
 
   void logout() {

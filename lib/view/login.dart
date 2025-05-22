@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'cadastro.dart';
+import 'redef_senha_email.dart';
 import '../controller/auth_controller.dart';
+import '../controller/validation_controller.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -91,15 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Icons.mail,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor, insira seu e-mail.';
-                      }
-                      if (!value.contains('@') || !value.contains('.')) {
-                        return 'Por favor, insira um e-mail válido.';
-                      }
-                      return null;
-                    },
+                    validator: ValidationController.validateEmail,
                   ),
                   const SizedBox(height: 20),
                   _buildTextFormField(
@@ -107,12 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Icons.lock,
                     controller: _senhaController,
                     isPassword: true,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor, insira sua senha.';
-                      }
-                      return null;
-                    },
+                    validator: ValidationController.validateSenha,
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
@@ -140,11 +129,39 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20),
                   TextButton(
                     onPressed: () {
-                      // TODO: Navegar para a tela de recuperação de senha
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Funcionalidade "Esqueci minha senha" não implementada.',
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder<dynamic>(
+                          pageBuilder:
+                              (
+                                BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                              ) => const RedefinicaoSenhaScreen(),
+                          transitionsBuilder: (
+                            BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                            Widget child,
+                          ) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(1.0, 0.0),
+                                end: Offset.zero,
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeInOutQuint,
+                                ),
+                              ),
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                            );
+                          },
+                          transitionDuration: const Duration(
+                            milliseconds: 500,
                           ),
                         ),
                       );
