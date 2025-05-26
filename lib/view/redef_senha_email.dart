@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
-import 'redef_senha_codigo.dart';
 
 class RedefinicaoSenhaScreen extends StatefulWidget {
   const RedefinicaoSenhaScreen({super.key});
@@ -24,31 +25,34 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
     super.dispose();
   }
 
-  void _handleEnviarEmail() {
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+
+  Future<void> salvarEmailReset(String email) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_email', email);
+  }
+
+  Future<void> _handleEnviarEmail() async {
     if (_formKey.currentState!.validate()) {
-
-      String msgErro = _authController.emailRedefinicao(_emailController.text);
-
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-      if (msgErro.isEmpty) {
+      final String? erro = await _authController.enviarEmailRedefinicao(
+        _emailController.text,
+      );
+      await salvarEmailReset(_emailController.text);
+
+      if (erro == null) {
         if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return const ValidarCodigoScreen();
-            },
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('E-mail enviado! Verifique sua caixa de entrada.'),
+            backgroundColor: Colors.green,
           ),
         );
-      }
-      else {
-        // Adiciona feedback caso o envio falhe (ex: email não cadastrado)
+      } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(msgErro),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text(erro), backgroundColor: Colors.red),
         );
       }
     }
@@ -59,10 +63,10 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color(0xFF34B3F1)),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF34B3F1)),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: Color(0xFF202022),
+        backgroundColor: const Color(0xFF202022),
         elevation: 0,
       ),
       body: Container(
@@ -80,11 +84,10 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF34B3F1),
+                      color: const Color(0xFF34B3F1),
                     ),
                   ),
                   const SizedBox(height: 50),
-                  // Usa o ValidationController para validar o e-mail
                   _buildTextFormField(
                     'Informe o e-mail cadastrado',
                     Icons.email_outlined,
@@ -100,18 +103,18 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                     child: ElevatedButton(
                       onPressed: _handleEnviarEmail,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF34B3F1),
+                        backgroundColor: const Color(0xFF34B3F1),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: Text(
-                        'Enviar código de verificação',
+                        'Enviar link para redefinir senha',
                         style: GoogleFonts.inter(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xffF2F2F2),
+                          color: const Color(0xffF2F2F2),
                         ),
                       ),
                     ),
@@ -131,7 +134,7 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                     child: Text(
                       'Retornar para a tela de login',
                       style: GoogleFonts.inter(
-                        color: Color(0xFF34B3F1),
+                        color: const Color(0xFF34B3F1),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -157,12 +160,12 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
       controller: controller,
       obscureText: isPassword,
       style: const TextStyle(color: Color(0xffF2F2F2)),
-      cursorColor: Color(0xFF34B3F1),
+      cursorColor: const Color(0xFF34B3F1),
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: Color(0xffF2F2F2)),
+        prefixIcon: Icon(icon, color: const Color(0xffF2F2F2)),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xff303131)),
         ),
@@ -176,7 +179,7 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
           borderSide: BorderSide(color: Colors.red, width: 2),
         ),
         filled: true,
-        fillColor: Color.fromARGB(255, 102, 102, 102),
+        fillColor: const Color.fromARGB(255, 102, 102, 102),
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 
 class AlterarSenhaScreen extends StatefulWidget {
-  const AlterarSenhaScreen({super.key});
+  final String recoveryCode;
+
+  const AlterarSenhaScreen({super.key, required this.recoveryCode});
 
   @override
   State<AlterarSenhaScreen> createState() => _AlterarSenhaScreenState();
@@ -14,9 +17,16 @@ class AlterarSenhaScreen extends StatefulWidget {
 class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _confirmarSenhaController = TextEditingController();
-
+  final TextEditingController _confirmarSenhaController =
+      TextEditingController();
   final AuthController _authController = AuthController();
+
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -25,46 +35,46 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
     super.dispose();
   }
 
-  void _handleAlterarSenha() {
-    if (_formKey.currentState!.validate()) {
+  Future<String?> lerEmail() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_email');
+  }
 
-      bool sucesso = _authController.alterarSenha(_senhaController.text);
+  void _handleAlterarSenha() async {
+    if (!_formKey.currentState!.validate()) return;
 
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    setState(() => _loading = true);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-      if (sucesso) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Senha alterada com sucesso! Redirecionando para login...',
-            ),
-            backgroundColor: Colors.green,
+    final String? erro = await _authController.redefinirSenhaComToken(
+      recoveryToken: widget.recoveryCode,
+      novaSenha: _senhaController.text,
+      email: await lerEmail() ?? '',
+    );
+
+    setState(() => _loading = false);
+
+    if (!mounted) return;
+    if (erro == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Senha alterada com sucesso! Redirecionando para login...',
           ),
-        );
+          backgroundColor: Colors.green,
+        ),
+      );
 
-        Future<void>.delayed(const Duration(seconds: 2), () {
-          if (!mounted) return;
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute<void>(
-              builder: (BuildContext context) {
-                return const LoginScreen();
-              },
-            ),
-          );
-        });
-      }
-      else {
-        // Adiciona feedback caso o registro falhe (ex: email já existe)
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Falha ao alterar a senha.',
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      await Future<void>.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(erro), backgroundColor: Colors.red),
+      );
     }
   }
 
@@ -73,10 +83,10 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color(0xFF34B3F1)),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF34B3F1)),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: Color(0xFF202022),
+        backgroundColor: const Color(0xFF202022),
         elevation: 0,
       ),
       body: Container(
@@ -94,11 +104,10 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF34B3F1),
+                      color: const Color(0xFF34B3F1),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Usa o ValidationController para validar a senha
                   _buildTextFormField(
                     'Nova Senha',
                     Icons.lock_outlined,
@@ -107,7 +116,6 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                     validator: ValidationController.validateSenha,
                   ),
                   const SizedBox(height: 20),
-                  // Usa o ValidationController para validar a confirmação de senha
                   _buildTextFormField(
                     'Confirmar Senha',
                     Icons.lock_outlined,
@@ -126,22 +134,29 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _handleAlterarSenha,
+                      onPressed: _loading ? null : _handleAlterarSenha,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF34B3F1),
+                        backgroundColor: const Color(0xFF34B3F1),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(
-                        'Alterar senha',
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xffF2F2F2),
-                        ),
-                      ),
+                      child:
+                          _loading
+                              ? const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              )
+                              : Text(
+                                'Alterar senha',
+                                style: GoogleFonts.inter(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xffF2F2F2),
+                                ),
+                              ),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -150,16 +165,15 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute<void>(
-                          builder: (BuildContext context) {
-                            return const LoginScreen();
-                          },
+                          builder:
+                              (BuildContext context) => const LoginScreen(),
                         ),
                       );
                     },
                     child: Text(
                       'Retornar para a tela de login',
                       style: GoogleFonts.inter(
-                        color: Color(0xFF34B3F1),
+                        color: const Color(0xFF34B3F1),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -185,12 +199,12 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
       controller: controller,
       obscureText: isPassword,
       style: const TextStyle(color: Color(0xffF2F2F2)),
-      cursorColor: Color(0xFF34B3F1),
+      cursorColor: const Color(0xFF34B3F1),
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: Color(0xffF2F2F2)),
+        prefixIcon: Icon(icon, color: const Color(0xffF2F2F2)),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xff303131)),
         ),
@@ -204,7 +218,7 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
           borderSide: BorderSide(color: Colors.red, width: 2),
         ),
         filled: true,
-        fillColor: Color.fromARGB(255, 102, 102, 102),
+        fillColor: const Color.fromARGB(255, 102, 102, 102),
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,
@@ -214,82 +228,4 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
       autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
-
 }
-
-/*
-import 'package:flutter/material.dart';
-
-class NovaSenha extends StatefulWidget {
-  @override
-  _NovaSenhaState createState() => _NovaSenhaState();
-}
-
-class _NovaSenhaState extends State<NovaSenha> {
-  final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _confirmarSenhaController = TextEditingController();
-
-  void _redefinirSenha(BuildContext context) {
-    String senha = _senhaController.text;
-    String confirmarSenha = _confirmarSenhaController.text;
-
-    if (senha.isEmpty || confirmarSenha.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, preencha ambos os campos.')),
-      );
-    } else if (senha != confirmarSenha) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('As senhas não coincidem.')),
-      );
-    } else {
-      // Lógica para redefinir a senha
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Senha redefinida com sucesso!')),
-      );
-
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Nova senha'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _senhaController,
-                decoration: InputDecoration(
-                  labelText: 'Nova senha',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _confirmarSenhaController,
-                decoration: InputDecoration(
-                  labelText: 'Confirmar nova senha',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => _redefinirSenha(context),
-                child: Text('Redefinir senha'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-*/

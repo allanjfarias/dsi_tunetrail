@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
         const SnackBar(content: Text('Processando login...')),
       );
 
-      bool sucesso = _authController.login(
+      bool sucesso = await _authController.login(
         _emailController.text,
         _senhaController.text,
       );
