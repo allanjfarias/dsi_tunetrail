@@ -4,10 +4,11 @@ import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
 import 'login.dart';
 
-class AlterarSenhaScreen extends StatefulWidget {
-  final String accessToken; // Token recebido no link
 
-  const AlterarSenhaScreen({super.key, required this.accessToken});
+class AlterarSenhaScreen extends StatefulWidget {
+  final String recoveryCode;
+
+  const AlterarSenhaScreen({super.key, required this.recoveryCode});
 
   @override
   State<AlterarSenhaScreen> createState() => _AlterarSenhaScreenState();
@@ -18,8 +19,14 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _confirmarSenhaController =
       TextEditingController();
-
   final AuthController _authController = AuthController();
+
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -28,46 +35,44 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
     super.dispose();
   }
 
-  Future<void> _handleAlterarSenha() async {
-    if (_formKey.currentState!.validate()) {
-      bool sucesso = await _authController.alterarSenhaComToken(
-        novaSenha: _senhaController.text,
-        accessToken: widget.accessToken,
+
+
+  void _handleAlterarSenha() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _loading = true);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  
+
+    final String? erro = await _authController.redefinirSenhaComToken(
+      recoveryToken: widget.recoveryCode,
+      novaSenha: _senhaController.text,
+    );
+    
+
+    setState(() => _loading = false);
+
+    if (!mounted) return;
+    if (erro == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Senha alterada com sucesso! Redirecionando para login...',
+          ),
+          backgroundColor: Colors.green,
+        ),
       );
 
-      if (!mounted)return; // Garantir que o widget está montado antes de usar o context
-
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-      if (sucesso) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Senha alterada com sucesso! Redirecionando para login...',
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        Future.delayed(const Duration(seconds: 2), () {
-          if (!mounted) return; // Verifica novamente antes de navegar
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute<void>(
-              builder: (BuildContext context) {
-                return const LoginScreen();
-              },
-            ),
-          );
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Falha ao alterar a senha.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      await Future<void>.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(erro), backgroundColor: Colors.red),
+      );
     }
   }
 
@@ -127,7 +132,7 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _handleAlterarSenha,
+                      onPressed: _loading ? null : _handleAlterarSenha,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF34B3F1),
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -135,14 +140,21 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(
-                        'Alterar senha',
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xffF2F2F2),
-                        ),
-                      ),
+                      child:
+                          _loading
+                              ? const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              )
+                              : Text(
+                                'Alterar senha',
+                                style: GoogleFonts.inter(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xffF2F2F2),
+                                ),
+                              ),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -151,9 +163,8 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute<void>(
-                          builder: (BuildContext context) {
-                            return const LoginScreen();
-                          },
+                          builder:
+                              (BuildContext context) => const LoginScreen(),
                         ),
                       );
                     },
@@ -180,12 +191,14 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
     bool isPassword = false,
     TextEditingController? controller,
     String? Function(String?)? validator,
+    TextInputType? keyboardType,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
       style: const TextStyle(color: Color(0xffF2F2F2)),
       cursorColor: const Color(0xFF34B3F1),
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Color(0xffF2F2F2)),

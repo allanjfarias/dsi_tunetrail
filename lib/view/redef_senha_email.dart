@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 
 
@@ -24,11 +26,24 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
     super.dispose();
   }
 
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+
+  
+
+
+  Future<void> salvarEmailReset(String email) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email_para_reset', email);
+  }
+
   Future<void> _handleEnviarEmail() async {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-      final String? erro = await _authController.enviarEmailRedefinicao(_emailController.text);
+      final String? erro = await _authController.enviarEmailRedefinicao(
+        _emailController.text,
+      );
+      await salvarEmailReset(_emailController.text);
 
       if (erro == null) {
         if (!mounted) return;
@@ -41,10 +56,7 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(erro),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text(erro), backgroundColor: Colors.red),
         );
       }
     }
