@@ -6,7 +6,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 
-
 class RedefinicaoSenhaScreen extends StatefulWidget {
   const RedefinicaoSenhaScreen({super.key});
 
@@ -28,12 +27,9 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
 
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
 
-  
-
-
   Future<void> salvarEmailReset(String email) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('email_para_reset', email);
+    await prefs.setString('user_email', email);
   }
 
   Future<void> _handleEnviarEmail() async {

@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'view/redef_senha_nova_senha.dart';
 import 'view/login.dart';
-import 'view/home_screen.dart';
+
 
 // Declarar globalmente a chave do Navigator
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -15,14 +15,11 @@ Future<void> main() async {
 
   await dotenv.load(fileName: '.env');
 
-  final String supabaseUrl = dotenv.env['SUPABASE_URL']!;
-  final String supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY']!;
-
   await Supabase.initialize(
-    url: supabaseUrl,
-    anonKey: supabaseAnonKey,
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
     authOptions: FlutterAuthClientOptions(
-      localStorage: const EmptyLocalStorage(),
+      localStorage: const EmptyLocalStorage(), // Sem persistência
     ),
   );
 
@@ -44,89 +41,32 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _appLinks = AppLinks();
 
-    // Escuta links quando o app está aberto (foreground)
-    _appLinks.uriLinkStream.listen((Uri uri) => _handleDeepLink(uri));
-  }
+    _appLinks.uriLinkStream.listen((Uri uri) {
+     
+      if (uri.host != 'reset-password') return;
 
-  Future<void> _handleDeepLink(Uri? uri) async {
-    if (uri == null) return;
+      final String? recoveryCode = uri.queryParameters['access_token'];
+      if (recoveryCode == null || recoveryCode.isEmpty) return;
 
-    if (uri.host != 'reset-password') {
-      return;
-    }
-
-    final String? recoveryCode = uri.queryParameters['code'];
-    if (recoveryCode == null || recoveryCode.isEmpty) {
-      return;
-    }
-
-    // Navegar usando navigatorKey para garantir contexto válido
-    navigatorKey.currentState?.pushReplacement(
-      MaterialPageRoute<void>(
-        builder: (_) => AlterarSenhaScreen(recoveryCode: recoveryCode),
-      ),
-    );
+      navigatorKey.currentState?.pushReplacement(
+        MaterialPageRoute<dynamic>(
+          builder: (_) => AlterarSenhaScreen(recoveryCode: recoveryCode),
+        ),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TuneTrail',
       navigatorKey: navigatorKey,
+      title: 'TuneTrail',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: InitialScreen(handleDeepLink: _handleDeepLink),
+      // Começa direto na tela de login
+      home: const LoginScreen(),
     );
-  }
-}
-
-class InitialScreen extends StatefulWidget {
-  final Future<void> Function(Uri?) handleDeepLink;
-
-  const InitialScreen({super.key, required this.handleDeepLink});
-
-  @override
-  State<InitialScreen> createState() => _InitialScreenState();
-}
-
-class _InitialScreenState extends State<InitialScreen> {
-  final AppLinks _appLinks = AppLinks();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkDeepLinkAndNavigate();
-  }
-
-  Future<void> _checkDeepLinkAndNavigate() async {
-    final Uri? uri = await _appLinks.getInitialLink();
-    if (uri != null) {
-      await widget.handleDeepLink(uri);
-      return; // Navegou via deep link
-    }
-
-    // Se não veio por deep link, verifica login
-    final User? user = Supabase.instance.client.auth.currentUser;
-
-    if (user != null) {
-      // Usuário logado, vai para Home
-      if (!mounted) return;
-      navigatorKey.currentState?.pushReplacement(
-        MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
-      );
-    } else {
-      // Usuário não logado, vai para Login
-      if (!mounted) return;
-      navigatorKey.currentState?.pushReplacement(
-        MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Iniciando...')));
   }
 }

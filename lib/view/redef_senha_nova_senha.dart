@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
-
 
 class AlterarSenhaScreen extends StatefulWidget {
   final String recoveryCode;
@@ -35,20 +35,22 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
     super.dispose();
   }
 
-
+  Future<String?> lerEmail() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_email');
+  }
 
   void _handleAlterarSenha() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _loading = true);
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-  
 
     final String? erro = await _authController.redefinirSenhaComToken(
       recoveryToken: widget.recoveryCode,
       novaSenha: _senhaController.text,
+      email: await lerEmail() ?? '',
     );
-    
 
     setState(() => _loading = false);
 

@@ -2,8 +2,6 @@ import '../models/user.dart' as local_user;
 import '../models/profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class AuthController {
@@ -95,11 +93,7 @@ class AuthController {
 
   Future<String?> enviarEmailRedefinicao(String email) async {
     try {
-      await supa.Supabase.instance.client.auth.resetPasswordForEmail(
-        email,
-        redirectTo:
-            'https://allanjfarias.github.io/tunetrail-redirect/', // Ajuste seu deep link real aqui
-      );
+      await supa.Supabase.instance.client.auth.resetPasswordForEmail(email);
       return null; // Sucesso, sem erro
     } catch (e) {
       return e.toString(); // Mensagem de erro para exibir
@@ -111,49 +105,47 @@ class AuthController {
   Future<String?> redefinirSenhaComToken({
     required String recoveryToken,
     required String novaSenha,
+    required String email,
   }) async {
-    final String supabaseUrl = this.supabaseUrl;
+    final supa.SupabaseClient supabase = supa.Supabase.instance.client;
 
-    final Uri url = Uri.parse('$supabaseUrl/auth/v1/verify');
-
-    debugPrint('[DEBUG] Iniciando redefinição de senha');
-    debugPrint('[DEBUG] URL de redefinição: $url');
-    debugPrint('[DEBUG] Recovery Token: $recoveryToken');
-    debugPrint('[DEBUG] Novo senha: $novaSenha');
+    debugPrint('[DEBUG] Iniciando redefinição de senha via verifyOTP');
+    debugPrint('[DEBUG] Token: $recoveryToken');
+    debugPrint('[DEBUG] Nova senha: $novaSenha');
 
     try {
-      final Map<String, String> headers = <String, String>{
-        'Content-Type': 'application/json',
-        'apikey': supabaseAnonKey,
-        'Authorization': 'Bearer $supabaseAnonKey',
-      };
-      final Map<String, String> body = <String, String>{
-        'type': 'recovery',
-        'token': recoveryToken,
-        'password': novaSenha,
-      };
-
-      debugPrint('[DEBUG] Headers: $headers');
-      debugPrint('[DEBUG] Body: ${jsonEncode(body)}');
-
-      final http.Response response = await http.post(
-        url,
-        headers: headers,
-        body: jsonEncode(body),
+      // 1. Verifica o token de recuperação e inicia a sessão
+      final supa.AuthResponse authResponse = await supabase.auth.verifyOTP(
+        type: supa.OtpType.recovery,
+        token: recoveryToken,
+        email: email
       );
 
-      debugPrint('[DEBUG] Status Code: ${response.statusCode}');
-      debugPrint('[DEBUG] Resposta do servidor: ${response.body}');
+      final supa.Session? session = authResponse.session;
+      final supa.User? user = authResponse.user;
 
-      if (response.statusCode == 200) {
-        debugPrint('[DEBUG] Redefinição de senha bem-sucedida');
-        return null; // Sucesso
-      } else {
-        debugPrint('[DEBUG] Erro na redefinição de senha');
-        return 'Erro ao redefinir senha: ${response.body}';
+      if (session == null || user == null) {
+        debugPrint('[DEBUG] Sessão ou usuário inválido após verifyOTP');
+        return 'Erro ao autenticar com token de recuperação.';
       }
+
+      debugPrint('[DEBUG] Sessão iniciada com sucesso');
+      debugPrint('[DEBUG] Atualizando senha...');
+
+      // 2. Atualiza a senha do usuário autenticado
+      final supa.UserResponse updateResponse = await supabase.auth.updateUser(
+        supa.UserAttributes(password: novaSenha),
+      );
+
+      if (updateResponse.user == null) {
+        debugPrint('[DEBUG] Erro ao atualizar senha');
+        return 'Erro ao atualizar a senha.';
+      }
+
+      debugPrint('[DEBUG] Senha atualizada com sucesso');
+      return null; // Sucesso
     } catch (e) {
-      debugPrint('[DEBUG] Exceção inesperada: $e');
+      debugPrint('[DEBUG] Erro durante redefinição: $e');
       return 'Erro inesperado: $e';
     }
   }
