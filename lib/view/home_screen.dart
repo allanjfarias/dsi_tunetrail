@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+  }
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+  
 
   // dados de exemplo para os carrosséis
   static const List<Map<String, String>> _eventosData = <Map<String, String>>[
@@ -146,7 +154,17 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
         onTap: (int index) {
-          // TODO: Lógica para navegação ou ação ao clicar nos itens
+          setState(() {
+            _currentIndex = index;
+          });
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home_screen');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/buscar_screen');
+              break;
+          }
         },
       ),
     );

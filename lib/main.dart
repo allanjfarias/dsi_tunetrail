@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:app_links/app_links.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:tunetrail/view/buscar_screen.dart';
+import 'package:tunetrail/view/home_screen.dart';
 import 'view/redef_senha_nova_senha.dart';
 import 'view/login.dart';
 
@@ -67,6 +69,15 @@ class _MyAppState extends State<MyApp> {
       ),
       // Começa direto na tela de login
       home: const LoginScreen(),
+      routes: {
+        '/home_screen': (BuildContext context) => const HomeScreen(),
+        '/buscar_screen': (BuildContext context) => const BuscarScreen(),
+      },
+      onUnknownRoute: (settings) => MaterialPageRoute(
+        builder: (_) => Scaffold(
+          body: Center(child: Text('Rota ${settings.name} não encontrada')),
+        ),
+      ),
     );
   }
 }
