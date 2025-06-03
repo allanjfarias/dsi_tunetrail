@@ -4,6 +4,7 @@ import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
+import '../constants/colors.dart';
 
 class AlterarSenhaScreen extends StatefulWidget {
   final String recoveryCode;
@@ -61,7 +62,7 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
           content: Text(
             'Senha alterada com sucesso! Redirecionando para login...',
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
 
@@ -73,7 +74,7 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(erro), backgroundColor: Colors.red),
+        SnackBar(content: Text(erro), backgroundColor: AppColors.error),
       );
     }
   }
@@ -83,14 +84,14 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF34B3F1)),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primaryColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: const Color(0xFF202022),
+        backgroundColor: AppColors.background,
         elevation: 0,
       ),
       body: Container(
-        color: const Color(0xFF202022),
+        color: AppColors.background,
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -104,7 +105,7 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF34B3F1),
+                      color: AppColors.primaryColor,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -129,14 +130,14 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                             ),
                   ),
                   const SizedBox(height: 30),
-                  const Divider(color: Color(0xFF34B3F1), height: 30),
+                  const Divider(color: AppColors.primaryColor, height: 30),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _loading ? null : _handleAlterarSenha,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF34B3F1),
+                        backgroundColor: AppColors.primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -146,7 +147,7 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                           _loading
                               ? const CircularProgressIndicator(
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                                  AppColors.textPrimary,
                                 ),
                               )
                               : Text(
@@ -154,7 +155,7 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                                 style: GoogleFonts.inter(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xffF2F2F2),
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                     ),
@@ -173,7 +174,7 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                     child: Text(
                       'Retornar para a tela de login',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF34B3F1),
+                        color: AppColors.primaryColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -198,27 +199,27 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      style: const TextStyle(color: Color(0xffF2F2F2)),
-      cursorColor: const Color(0xFF34B3F1),
+      style: const TextStyle(color: AppColors.textPrimary),
+      cursorColor: AppColors.primaryColor,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: const Color(0xffF2F2F2)),
+        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        prefixIcon: Icon(icon, color: AppColors.icon),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xff303131)),
+          borderSide: BorderSide(color: AppColors.divider),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white, width: 2),
+          borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
         ),
         errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1),
+          borderSide: BorderSide(color: AppColors.error, width: 1),
         ),
         focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
         filled: true,
-        fillColor: const Color.fromARGB(255, 102, 102, 102),
+        fillColor: AppColors.inputBackground,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,

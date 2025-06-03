@@ -4,6 +4,7 @@ import 'redef_senha_email.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
 import 'home_screen.dart';
+import '../constants/colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -48,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
         scaffoldMessenger.showSnackBar(
           const SnackBar(
             content: Text('Login bem-sucedido!'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
         if (mounted) {
@@ -62,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
         scaffoldMessenger.showSnackBar(
           const SnackBar(
             content: Text('Falha no login. Verifique seu e-mail e senha.'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -73,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: const Color(0xFF202022),
+        color: AppColors.background,
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -113,13 +114,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        backgroundColor: const Color(0xFF34B3F1),
+                        backgroundColor: AppColors.primaryColor,
                         elevation: 2,
                       ),
                       child: const Text(
                         'Entrar',
                         style: TextStyle(
-                          color: Color(0xFFFFFFFF),
+                          color: AppColors.textPrimary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -168,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: const Text(
                       'Esqueci minha senha',
-                      style: TextStyle(color: Color(0xFF34B3F1)),
+                      style: TextStyle(color: AppColors.primaryColor),
                     ),
                   ),
                   const SizedBox(height: 0),
@@ -177,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: <Widget>[
                       const Text(
                         'Não tem uma conta? ',
-                        style: TextStyle(color: Color(0xffF2F2F2)),
+                        style: TextStyle(color: AppColors.textSecondary),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -221,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text(
                           'Cadastre-se',
                           style: TextStyle(
-                            color: Color(0xFF34B3F1),
+                            color: AppColors.primaryColor,
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
                           ),
@@ -250,32 +251,32 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+      style: const TextStyle(color: AppColors.textPrimary),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(
-          color: Color(0xffF2F2F2),
+          color: AppColors.textSecondary,
           fontWeight: FontWeight.bold,
         ),
-        prefixIcon: Icon(icon, color: const Color(0xffF2F2F2)),
+        prefixIcon: Icon(icon, color: AppColors.icon),
         errorStyle: const TextStyle(
-          color: Colors.red,
+          color: AppColors.error,
           fontWeight: FontWeight.bold,
         ),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xff303131)),
+          borderSide: BorderSide(color: AppColors.inputBackground),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF34B3F1)),
+          borderSide: BorderSide(color: AppColors.primaryColor),
         ),
         errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
         focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
         filled: true,
-        fillColor: const Color.fromARGB(255, 102, 102, 102),
+        fillColor: AppColors.inputBackground,
       ),
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,

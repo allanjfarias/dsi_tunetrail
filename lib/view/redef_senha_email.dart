@@ -5,6 +5,7 @@ import '../controller/validation_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
+import '../constants/colors.dart';
 
 class RedefinicaoSenhaScreen extends StatefulWidget {
   const RedefinicaoSenhaScreen({super.key});
@@ -46,13 +47,13 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('E-mail enviado! Verifique sua caixa de entrada.'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(erro), backgroundColor: Colors.red),
+          SnackBar(content: Text(erro), backgroundColor: AppColors.error),
         );
       }
     }
@@ -63,14 +64,14 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF34B3F1)),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primaryColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: const Color(0xFF202022),
+        backgroundColor: AppColors.background,
         elevation: 0,
       ),
       body: Container(
-        color: const Color(0xFF202022),
+        color: AppColors.background,
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -84,7 +85,7 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF34B3F1),
+                      color: AppColors.primaryColor,
                     ),
                   ),
                   const SizedBox(height: 50),
@@ -96,14 +97,14 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                     validator: ValidationController.validateEmail,
                   ),
                   const SizedBox(height: 30),
-                  const Divider(color: Color(0xFF34B3F1), height: 30),
+                  const Divider(color: AppColors.primaryColor, height: 30),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _handleEnviarEmail,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF34B3F1),
+                        backgroundColor: AppColors.primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -114,7 +115,7 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                         style: GoogleFonts.inter(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xffF2F2F2),
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ),
@@ -134,7 +135,7 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                     child: Text(
                       'Retornar para a tela de login',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF34B3F1),
+                        color: AppColors.primaryColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -159,27 +160,27 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      style: const TextStyle(color: Color(0xffF2F2F2)),
-      cursorColor: const Color(0xFF34B3F1),
+      style: const TextStyle(color: AppColors.textPrimary),
+      cursorColor: AppColors.primaryColor,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: const Color(0xffF2F2F2)),
+        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        prefixIcon: Icon(icon, color: AppColors.icon),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xff303131)),
+          borderSide: BorderSide(color: AppColors.divider),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white, width: 2),
+          borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
         ),
         errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1),
+          borderSide: BorderSide(color: AppColors.error, width: 1),
         ),
         focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
         filled: true,
-        fillColor: const Color.fromARGB(255, 102, 102, 102),
+        fillColor: AppColors.inputBackground,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,

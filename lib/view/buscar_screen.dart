@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../constants/colors.dart';
 
 class BuscarScreen extends StatefulWidget {
   const BuscarScreen({super.key});
@@ -22,7 +23,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0A),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -42,7 +43,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
               style: GoogleFonts.poppins(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppColors.textPrimary,
               ),
             ),
           ],
@@ -58,7 +59,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
             Text(
               'Categorias populares',
               style: GoogleFonts.poppins(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -82,7 +83,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
             Text(
               'Recentes',
               style: GoogleFonts.poppins(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -105,10 +106,10 @@ class _BuscarScreenState extends State <BuscarScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0XFF202022),
+        backgroundColor: AppColors.background,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF34B3F1),
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: AppColors.primaryColor,
+        unselectedItemColor: AppColors.textDisabled,
         currentIndex: 1,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
@@ -138,10 +139,10 @@ class _BuscarScreenState extends State <BuscarScreen> {
     return TextField(
       decoration: InputDecoration(
         hintText: 'O que você procura?',
-        hintStyle: const TextStyle(color: Colors.blueAccent),
-        prefixIcon: const Icon(Icons.search, color: Colors.blueAccent),
+        hintStyle: const TextStyle(color: AppColors.primaryLight),
+        prefixIcon: const Icon(Icons.search, color: AppColors.primaryColor),
         filled: true,
-        fillColor: Colors.black,
+        fillColor: AppColors.card,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -149,7 +150,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
         contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       ),
       style: const TextStyle(color: Colors.white),
-      cursorColor: Colors.blueAccent,
+      cursorColor: AppColors.primaryColor,
     );
   }
 
@@ -162,20 +163,14 @@ class _BuscarScreenState extends State <BuscarScreen> {
     child: Container(
       height: 100,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.blueAccent.withOpacity(0.7),
-            Colors.purpleAccent.withOpacity(0.7),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [AppColors.cardShadow],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 28, color: Colors.white),
+          Icon(icon, size: 28, color: AppColors.icon),
           const SizedBox(height: 6),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -183,7 +178,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
               title,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -204,18 +199,18 @@ class _BuscarScreenState extends State <BuscarScreen> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.grey[900],
+            color: AppColors.card,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
-              const Icon(Icons.history, size: 20, color: Colors.white70),
+              const Icon(Icons.history, size: 20, color: AppColors.icon),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   searchTerm,
                   style: GoogleFonts.poppins(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 16, 
                   ),
                 ),
