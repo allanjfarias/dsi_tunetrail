@@ -22,7 +22,7 @@ abstract class AppColors {
   static const Color error = Color(0xFFF44336);
 
   static const Gradient primaryGradient = LinearGradient(
-    colors: [primaryColor, accent],
+    colors: <Color> [primaryColor, accent],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
