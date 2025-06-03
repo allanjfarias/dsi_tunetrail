@@ -1,56 +1,59 @@
 import 'package:intl/intl.dart';
 
 class Profile {
+  final String? id;
   final String nome;
   final DateTime dataNasc;
   final String genero;
 
-  // Construtor principal recebe DateTime
   Profile({
     required this.nome,
     required this.dataNasc,
     required this.genero,
+    this.id,
   });
 
-  // Factory para criar Profile a partir da data em string "dd/MM/yyyy"
   factory Profile.fromStringDate({
     required String nome,
-    required String dataNascString,
+    required String dataNasc,
     required String genero,
+    String? id,
   }) {
-    DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(dataNascString);
+    final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+
     return Profile(
       nome: nome,
-      dataNasc: parsedDate,
+      dataNasc: dateFormat.parse(dataNasc),
       genero: genero,
+      id: id,
     );
   }
 
-  // Factory para criar Profile a partir do Map (JSON do Supabase)
-  factory Profile.fromMap(Map<String, dynamic> map) {
+  factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
-      nome: map['nome'],
-      genero: map['genero'],
-      dataNasc: DateTime.parse(map['data_nasc']),
+      id: json['id'] as String?,
+      nome: json['nome'] as String,
+      dataNasc: DateTime.parse(json['data_nasc'] as String),
+      genero: json['genero'] as String,
     );
   }
 
-  // Converte o objeto para Map para salvar no Supabase
-  Map<String, dynamic> toMap() {
-    return <String, dynamic> {
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'id': id,
       'nome': nome,
+      'data_nasc': DateFormat('yyyy-MM-dd').format(dataNasc),
       'genero': genero,
-      'data_nasc': dataNasc.toIso8601String(),
     };
   }
 
-  // Getter para calcular idade baseado na dataNasc
   int get idade => _calcularIdade(dataNasc);
 
   int _calcularIdade(DateTime data) {
     final DateTime hoje = DateTime.now();
     int idade = hoje.year - data.year;
-    if (hoje.month < data.month || (hoje.month == data.month && hoje.day < data.day)) {
+    if (hoje.month < data.month ||
+        (hoje.month == data.month && hoje.day < data.day)) {
       idade--;
     }
     return idade;

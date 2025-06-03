@@ -12,7 +12,7 @@ class BuscarScreen extends StatefulWidget {
 class _BuscarScreenState extends State <BuscarScreen> {
   int _currentIndex = 1;
   // Exemplo de busca recente
-  final List<String> recentSearches = [
+  final List<String> recentSearches = <String>[
     'The Weeknd',
     'Pop Internacional',
     'Rock Classics',
@@ -30,7 +30,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Image.asset(
@@ -53,7 +53,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             _buildSearchBar(),
             const SizedBox(height: 30),
             Text(
@@ -71,7 +71,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
                 childAspectRatio: 2.0,
-                children: [
+                children: <Widget>[
                   _buildCategoryItem('Artistas em alta', Icons.people_alt_rounded),
                   _buildCategoryItem('Músicas em alta', Icons.trending_up_rounded),
                   _buildCategoryItem('Novos lançamentos', Icons.new_releases_rounded),
@@ -94,7 +94,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
                 physics: const BouncingScrollPhysics(), // Efeito de bounce
                 padding: EdgeInsets.zero,
                 itemCount: recentSearches.length,
-                itemBuilder: (context, index) {
+                itemBuilder: (BuildContext context,int index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: _buildRecentSearchItem(recentSearches[index]),
@@ -165,11 +165,11 @@ class _BuscarScreenState extends State <BuscarScreen> {
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [AppColors.cardShadow],
+        boxShadow: <BoxShadow>[AppColors.cardShadow],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: <Widget>[
           Icon(icon, size: 28, color: AppColors.icon),
           const SizedBox(height: 6),
           Padding(
@@ -203,7 +203,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
-            children: [
+            children: <Widget>[
               const Icon(Icons.history, size: 20, color: AppColors.icon),
               const SizedBox(width: 12),
               Expanded(
