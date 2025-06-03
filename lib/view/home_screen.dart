@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../constants/colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -89,20 +90,20 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF202022),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xff0A0A0A),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         title: Row(
           children: <Widget>[
-            const Icon(Icons.music_note, color: Color(0xFF34B3F1)),
+            const Icon(Icons.music_note, color: AppColors.primaryColor),
             const SizedBox(width: 2),
             Text(
               'TuneTrail',
               style: GoogleFonts.inter(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF34B3F1),
+                color: AppColors.primaryColor,
               ),
             ),
           ],
@@ -136,10 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF202022),
+        backgroundColor: AppColors.background,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF34B3F1),
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: AppColors.primaryColor,
+        unselectedItemColor: AppColors.textDisabled,
         currentIndex: 0,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
@@ -176,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
       style: GoogleFonts.inter(
         fontSize: 18,
         fontWeight: FontWeight.w600,
-        color: Color(0xffF2F2F2),
+        color: AppColors.textPrimary,
       ),
     );
   }
@@ -213,13 +214,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       color:
                           cardType == CardType.eventos
-                              ? const Color(0xFF34B3F1)
-                              : const Color(0xFF202022),
+                              ? AppColors.primaryColor
+                              : AppColors.card,
                       borderRadius: BorderRadius.circular(8.0),
                       border:
                           cardType != CardType.eventos
                               ? Border.all(
-                                color: const Color(0xFF878787),
+                                color: AppColors.divider,
                                 width: 1,
                               )
                               : null,
@@ -235,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   item['title'] ?? '',
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
-                                    color: Colors.white,
+                                    color: AppColors.textPrimary,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14,
                                   ),
@@ -253,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         item['title'] ?? 'Nome ${index + 1}',
                         style: GoogleFonts.inter(
                           fontSize: 14,
-                          color: Colors.grey[400],
+                          color: AppColors.textSecondary,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

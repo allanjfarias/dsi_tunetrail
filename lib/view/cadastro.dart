@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
 import 'login.dart';
+import '../constants/colors.dart';
 
 class CadastroScreen extends StatefulWidget {
   const CadastroScreen({super.key});
@@ -56,7 +57,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
             content: Text(
               'Cadastro realizado com sucesso! Redirecionando para login...',
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
 
@@ -78,7 +79,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
             content: Text(
               'Falha no cadastro. Verifique os dados ou tente um e-mail/nome de usuário diferente.',
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -90,14 +91,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color(0xFF34B3F1)),
+          icon: Icon(Icons.arrow_back, color: AppColors.primaryColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: Color(0xFF202022),
+        backgroundColor: AppColors.background,
         elevation: 0,
       ),
       body: Container(
-        color: const Color(0xFF202022),
+        color: AppColors.background,
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -111,7 +112,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF34B3F1),
+                      color: AppColors.primaryColor,
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -175,14 +176,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
                             ),
                   ),
                   const SizedBox(height: 30),
-                  const Divider(color: Color(0xFF34B3F1), height: 30),
+                  const Divider(color: AppColors.primaryColor, height: 30),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _handleCadastro,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF34B3F1),
+                        backgroundColor: AppColors.primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -193,7 +194,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                         style: GoogleFonts.inter(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xffF2F2F2),
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ),
@@ -206,7 +207,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     child: Text(
                       'Já tem uma conta? Faça login',
                       style: GoogleFonts.inter(
-                        color: Color(0xFF34B3F1),
+                        color: AppColors.primaryColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -231,27 +232,27 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      style: const TextStyle(color: Color(0xffF2F2F2)),
-      cursorColor: Color(0xFF34B3F1),
+      style: const TextStyle(color: AppColors.textPrimary),
+      cursorColor: AppColors.primaryColor,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: Color(0xffF2F2F2)),
+        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        prefixIcon: Icon(icon, color: AppColors.icon),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xff303131)),
+          borderSide: BorderSide(color: AppColors.divider),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white, width: 2),
+          borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
         ),
         errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1),
+          borderSide: BorderSide(color: AppColors.error, width: 1),
         ),
         focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
         filled: true,
-        fillColor: Color.fromARGB(255, 102, 102, 102),
+        fillColor: AppColors.inputBackground,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,
@@ -272,34 +273,34 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: Color(0xffF2F2F2)),
+        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        prefixIcon: Icon(icon, color: AppColors.icon),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xff303131)),
+          borderSide: BorderSide(color: AppColors.divider),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white, width: 2),
+          borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
         ),
         errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1),
+          borderSide: BorderSide(color: AppColors.error, width: 1),
         ),
         focusedErrorBorder: const OutlineInputBorder(
           borderSide: BorderSide(
-            color: Color.fromARGB(255, 11, 11, 11),
+            color: AppColors.error,
             width: 2,
           ),
         ),
         filled: true,
-        fillColor: Color.fromARGB(255, 102, 102, 102),
+        fillColor: AppColors.inputBackground,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,
         ),
       ),
       value: controller.text.isEmpty ? null : controller.text,
-      icon: const Icon(Icons.arrow_drop_down, color: Color(0xffF2F2F2)),
-      dropdownColor: Color.fromARGB(255, 102, 102, 102),
-      style: const TextStyle(color: Color(0xffF2F2F2)),
+      icon: const Icon(Icons.arrow_drop_down, color: AppColors.icon),
+      dropdownColor: AppColors.card,
+      style: const TextStyle(color: AppColors.textPrimary),
       onChanged: (String? value) {
         controller.text = value ?? '';
       },
@@ -309,7 +310,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
               value: value,
               child: Text(
                 value,
-                style: const TextStyle(color: Color(0xffF2F2F2)),
+                style: const TextStyle(color: AppColors.textPrimary),
               ),
             );
           }).toList(),
