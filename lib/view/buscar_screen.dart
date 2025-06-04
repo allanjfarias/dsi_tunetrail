@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../constants/colors.dart';
+import '../constants/text_styles.dart';
 
 class BuscarScreen extends StatefulWidget {
   const BuscarScreen({super.key});
@@ -40,10 +40,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
             ),
             Text(
               'Buscar',
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+              style: AppTextStyles.headlineLarge(
               ),
             ),
           ],
@@ -58,11 +55,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
             const SizedBox(height: 30),
             Text(
               'Categorias populares',
-              style: GoogleFonts.poppins(
-                color: AppColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTextStyles.headlineSmall(),
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -82,11 +75,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
             const SizedBox(height: 24),
             Text(
               'Recentes',
-              style: GoogleFonts.poppins(
-                color: AppColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTextStyles.headlineSmall(),
             ),
             const SizedBox(height: 12),
             Expanded(
@@ -139,7 +128,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
     return TextField(
       decoration: InputDecoration(
         hintText: 'O que você procura?',
-        hintStyle: const TextStyle(color: AppColors.primaryLight),
+        hintStyle: AppTextStyles.hintText(color: AppColors.primaryLight),
         prefixIcon: const Icon(Icons.search, color: AppColors.primaryColor),
         filled: true,
         fillColor: AppColors.card,
@@ -149,7 +138,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       ),
-      style: const TextStyle(color: Colors.white),
+      style: AppTextStyles.inputText(),
       cursorColor: AppColors.primaryColor,
     );
   }
@@ -177,11 +166,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
             child: Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                color: AppColors.textPrimary,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTextStyles.subtitleMedium(),
             ),
           ),
         ],
@@ -209,10 +194,7 @@ class _BuscarScreenState extends State <BuscarScreen> {
               Expanded(
                 child: Text(
                   searchTerm,
-                  style: GoogleFonts.poppins(
-                    color: AppColors.textPrimary,
-                    fontSize: 16, 
-                  ),
+                  style: AppTextStyles.bodyLarge(),
                 ),
               ),
             ],

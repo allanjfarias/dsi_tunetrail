@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import '../constants/colors.dart';
+import '../constants/text_styles.dart';
 
 class AlterarSenhaScreen extends StatefulWidget {
   final String recoveryCode;
@@ -58,9 +58,10 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
     if (!mounted) return;
     if (erro == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
             'Senha alterada com sucesso! Redirecionando para login...',
+            style: AppTextStyles.bodyMedium(),
           ),
           backgroundColor: AppColors.success,
         ),
@@ -102,11 +103,9 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                 children: <Widget>[
                   Text(
                     'TuneTrail',
-                    style: GoogleFonts.inter(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
+                    style: AppTextStyles.headlineLarge(
                       color: AppColors.primaryColor,
-                    ),
+                    ).copyWith(fontSize: 40),
                   ),
                   const SizedBox(height: 20),
                   _buildTextFormField(
@@ -152,11 +151,7 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                               )
                               : Text(
                                 'Alterar senha',
-                                style: GoogleFonts.inter(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
-                                ),
+                                style: AppTextStyles.button(),
                               ),
                     ),
                   ),
@@ -173,10 +168,9 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
                     },
                     child: Text(
                       'Retornar para a tela de login',
-                      style: GoogleFonts.inter(
+                      style: AppTextStyles.bodyMedium(
                         color: AppColors.primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      ).copyWith(fontWeight: FontWeight.w500,),
                     ),
                   ),
                 ],
@@ -199,12 +193,12 @@ class _AlterarSenhaScreenState extends State<AlterarSenhaScreen> {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      style: const TextStyle(color: AppColors.textPrimary),
+      style: AppTextStyles.bodyLarge(),
       cursorColor: AppColors.primaryColor,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        labelStyle: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
         prefixIcon: Icon(icon, color: AppColors.icon),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.divider),

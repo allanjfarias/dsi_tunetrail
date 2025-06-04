@@ -5,6 +5,7 @@ import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
 import 'home_screen.dart';
 import '../constants/colors.dart';
+import '../constants/text_styles.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -117,13 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         backgroundColor: AppColors.primaryColor,
                         elevation: 2,
                       ),
-                      child: const Text(
+                      child: Text(
                         'Entrar',
-                        style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTextStyles.headlineSmall() 
                       ),
                     ),
                   ),
@@ -167,18 +164,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       'Esqueci minha senha',
-                      style: TextStyle(color: AppColors.primaryColor),
+                      style: AppTextStyles.bodyMedium(color: AppColors.primaryColor),
                     ),
                   ),
                   const SizedBox(height: 0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      const Text(
+                      Text(
                         'Não tem uma conta? ',
-                        style: TextStyle(color: AppColors.textSecondary),
+                        style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -219,13 +216,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           'Cadastre-se',
-                          style: TextStyle(
+                          style: AppTextStyles.bodyMedium(
                             color: AppColors.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
+                          ).copyWith(fontWeight: FontWeight.bold, decoration: TextDecoration.underline)
                         ),
                       ),
                     ],
@@ -251,18 +246,16 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
-      style: const TextStyle(color: AppColors.textPrimary),
+      style: AppTextStyles.bodyLarge(),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(
+        labelStyle: AppTextStyles.bodyMedium(
           color: AppColors.textSecondary,
-          fontWeight: FontWeight.bold,
-        ),
+        ).copyWith(fontWeight: FontWeight.bold),
         prefixIcon: Icon(icon, color: AppColors.icon),
-        errorStyle: const TextStyle(
+        errorStyle: AppTextStyles.bodyMedium(
           color: AppColors.error,
-          fontWeight: FontWeight.bold,
-        ),
+        ).copyWith(fontWeight: FontWeight.bold),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.inputBackground),
         ),
