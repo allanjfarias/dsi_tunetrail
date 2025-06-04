@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
 import 'login.dart';
 import '../constants/colors.dart';
+import '../constants/text_styles.dart';
 
 class CadastroScreen extends StatefulWidget {
   const CadastroScreen({super.key});
@@ -39,7 +39,8 @@ class _CadastroScreenState extends State<CadastroScreen> {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Processando cadastro...')));
+      ).showSnackBar(SnackBar(content: Text('Processando cadastro...',
+      style: AppTextStyles.bodyMedium(),)));
 
       bool sucesso = await _authController.registrar(
         _nomeController.text,
@@ -53,9 +54,10 @@ class _CadastroScreenState extends State<CadastroScreen> {
 
       if (sucesso) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
               'Cadastro realizado com sucesso! Redirecionando para login...',
+              style: AppTextStyles.bodyMedium(),
             ),
             backgroundColor: AppColors.success,
           ),
@@ -75,9 +77,10 @@ class _CadastroScreenState extends State<CadastroScreen> {
       } else {
         // Adiciona feedback caso o registro falhe (ex: email já existe)
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
               'Falha no cadastro. Verifique os dados ou tente um e-mail/nome de usuário diferente.',
+              style: AppTextStyles.bodyMedium(),
             ),
             backgroundColor: AppColors.error,
           ),
@@ -109,11 +112,9 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 children: <Widget>[
                   Text(
                     'TuneTrail',
-                    style: GoogleFonts.inter(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
+                    style: AppTextStyles.headlineLarge(
                       color: AppColors.primaryColor,
-                    ),
+                    ).copyWith(fontSize: 40),
                   ),
                   const SizedBox(height: 40),
                   // Usa o ValidationController para validar o nome
@@ -191,11 +192,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                       ),
                       child: Text(
                         'Criar usuário',
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTextStyles.button().copyWith(fontSize: 18),
                       ),
                     ),
                   ),
@@ -206,10 +203,9 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     },
                     child: Text(
                       'Já tem uma conta? Faça login',
-                      style: GoogleFonts.inter(
+                      style: AppTextStyles.bodyMedium(
                         color: AppColors.primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      ).copyWith(fontWeight: FontWeight.w500),
                     ),
                   ),
                 ],
@@ -232,12 +228,12 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      style: const TextStyle(color: AppColors.textPrimary),
+      style: AppTextStyles.bodyLarge(),
       cursorColor: AppColors.primaryColor,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        labelStyle: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
         prefixIcon: Icon(icon, color: AppColors.icon),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.divider),
@@ -273,7 +269,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        labelStyle: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
         prefixIcon: Icon(icon, color: AppColors.icon),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.divider),
@@ -300,7 +296,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
       value: controller.text.isEmpty ? null : controller.text,
       icon: const Icon(Icons.arrow_drop_down, color: AppColors.icon),
       dropdownColor: AppColors.card,
-      style: const TextStyle(color: AppColors.textPrimary),
+      style: AppTextStyles.bodyLarge(),
       onChanged: (String? value) {
         controller.text = value ?? '';
       },

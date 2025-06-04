@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../constants/colors.dart';
+import '../constants/text_styles.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -100,9 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: 2),
             Text(
               'TuneTrail',
-              style: GoogleFonts.inter(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              style: AppTextStyles.headlineLarge(
                 color: AppColors.primaryColor,
               ),
             ),
@@ -174,11 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: GoogleFonts.inter(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+      style: AppTextStyles.headlineSmall(),
     );
   }
 
@@ -235,11 +229,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Text(
                                   item['title'] ?? '',
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  style: AppTextStyles.subtitleMedium(
                                     color: AppColors.textPrimary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
+                                  ).copyWith(fontSize: 14),
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -252,8 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
                         item['title'] ?? 'Nome ${index + 1}',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
+                        style: AppTextStyles.bodyMedium(
                           color: AppColors.textSecondary,
                         ),
                         maxLines: 2,

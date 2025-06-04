@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../controller/auth_controller.dart';
 import '../controller/validation_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import '../constants/colors.dart';
+import '../constants/text_styles.dart';
 
 class RedefinicaoSenhaScreen extends StatefulWidget {
   const RedefinicaoSenhaScreen({super.key});
@@ -45,15 +45,22 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
       if (erro == null) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('E-mail enviado! Verifique sua caixa de entrada.'),
+          SnackBar(
+            content: Text('E-mail enviado! Verifique sua caixa de entrada.',
+            style: AppTextStyles.bodyMedium(),
+            ),
             backgroundColor: AppColors.success,
           ),
         );
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(erro), backgroundColor: AppColors.error),
+          SnackBar(content: Text(
+            erro,
+            style: AppTextStyles.bodyMedium()
+            ),
+            backgroundColor: AppColors.error
+            ),
         );
       }
     }
@@ -82,11 +89,9 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                 children: <Widget>[
                   Text(
                     'TuneTrail',
-                    style: GoogleFonts.inter(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
+                    style: AppTextStyles.headlineLarge(
                       color: AppColors.primaryColor,
-                    ),
+                    ).copyWith(fontSize: 40)
                   ),
                   const SizedBox(height: 50),
                   _buildTextFormField(
@@ -112,11 +117,7 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                       ),
                       child: Text(
                         'Enviar link para redefinir senha',
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTextStyles.button(),
                       ),
                     ),
                   ),
@@ -134,10 +135,9 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
                     },
                     child: Text(
                       'Retornar para a tela de login',
-                      style: GoogleFonts.inter(
+                      style: AppTextStyles.bodyMedium(
                         color: AppColors.primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      ).copyWith(fontWeight: FontWeight.w500),
                     ),
                   ),
                 ],
@@ -160,12 +160,12 @@ class _RedefinicaoSenhaScreen extends State<RedefinicaoSenhaScreen> {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      style: const TextStyle(color: AppColors.textPrimary),
+      style: AppTextStyles.bodyLarge(),
       cursorColor: AppColors.primaryColor,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        labelStyle: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
         prefixIcon: Icon(icon, color: AppColors.icon),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.divider),
