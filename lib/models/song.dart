@@ -7,6 +7,7 @@ class Song {
   final double duration;
   final String genre;
   final int popularity;
+  final bool explicit;
 
   Song({
     required this.songId,
@@ -17,31 +18,34 @@ class Song {
     required this.duration,
     required this.genre,
     required this.popularity,
+    required this.explicit,
   });
 
   factory Song.fromJson(Map<String, dynamic> json) {
     return Song(
-      songId: json['song_id'] as String,
-      name: json['name'] as String,
-      artist: json['artist'] as String,
-      album: json['album'] as String,
-      coverUrl: json['cover_url'] as String,
-      duration: (json['duration'] as num).toDouble(),
-      genre: json['genre'] as String,
+      songId: json['id'] as String,
+      name: json['track_name'] as String,
+      artist: json['artists'] as String,
+      album: json['album_name'] as String,
+      coverUrl: json['cover_id'] as String,
+      duration: (json['duration_ms'] as num).toDouble(),
+      genre: json['track_genre'] as String,
       popularity: json['popularity'] as int,
+      explicit: json['explicit'] as bool,
     );
   }
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'song_id': songId,
-      'name': name,
-      'artist': artist,
-      'album': album,
-      'cover_url': coverUrl,
-      'duration': duration,
-      'genre': genre,
+      'id': songId,
+      'track_name': name,
+      'artists': artist,
+      'album_name': album,
+      'cover_id': coverUrl,
+      'duration_ms': duration,
+      'track_genre': genre,
       'popularity': popularity,
+      'explicit': explicit,
     };
   }
 }
