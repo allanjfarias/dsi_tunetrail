@@ -5,12 +5,14 @@ class Profile {
   final String nome;
   final DateTime dataNasc;
   final String genero;
+  final String? fotoUrl;
 
   Profile({
     required this.nome,
     required this.dataNasc,
     required this.genero,
     this.id,
+    this.fotoUrl,
   });
 
   factory Profile.fromStringDate({
