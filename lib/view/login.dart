@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'cadastro.dart';
+import 'redef_senha_email.dart';
 import '../controller/auth_controller.dart';
+import '../controller/validation_controller.dart';
 import 'home_screen.dart';
+import '../constants/colors.dart';
+import '../constants/text_styles.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,14 +30,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      final ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+      final ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(
+        context,
+      );
       final NavigatorState navigator = Navigator.of(context);
 
       scaffoldMessenger.showSnackBar(
         const SnackBar(content: Text('Processando login...')),
       );
 
-      bool sucesso = _authController.login(
+      bool sucesso = await _authController.login(
         _emailController.text,
         _senhaController.text,
       );
@@ -43,25 +48,34 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (sucesso) {
         scaffoldMessenger.showSnackBar(
-          const SnackBar(content: Text('Login bem-sucedido!'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('Login bem-sucedido!'),
+            backgroundColor: AppColors.success,
+          ),
         );
         if (mounted) {
           navigator.pushReplacement(
-            MaterialPageRoute<void>(builder: (BuildContext context) => const HomeScreen()),
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => const HomeScreen(),
+            ),
           );
         }
       } else {
         scaffoldMessenger.showSnackBar(
-          const SnackBar(content: Text('Falha no login. Verifique seu e-mail e senha.'), backgroundColor: Colors.red),
+          const SnackBar(
+            content: Text('Falha no login. Verifique seu e-mail e senha.'),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: const Color(0xff0A0A0A),
+        color: AppColors.background,
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -70,102 +84,147 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    'TuneTrail',
-                    style: GoogleFonts.inter(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xff247FFF),
-                    ),
+                  Image.asset(
+                    'lib/assets/tunetrail_banner.png',
+                    width: 600,
+                    height: 320,
                   ),
-                  const SizedBox(height: 40),
-                  _buildTextFormField('E-mail', Icons.mail, controller: _emailController, keyboardType: TextInputType.emailAddress, validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira seu e-mail.';
-                    }
-                    if (!value.contains('@') || !value.contains('.')) {
-                       return 'Por favor, insira um e-mail válido.';
-                    }
-                    return null;
-                  }),
+
+                  _buildTextFormField(
+                    'E-mail',
+                    Icons.mail,
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: ValidationController.validateEmail,
+                  ),
                   const SizedBox(height: 20),
-                  _buildTextFormField('Senha', Icons.lock, controller: _senhaController, isPassword: true, validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira sua senha.';
-                    }
-                    return null;
-                  }),
-                  const SizedBox(height: 30),
+                  _buildTextFormField(
+                    'Senha',
+                    Icons.lock,
+                    controller: _senhaController,
+                    isPassword: true,
+                    validator: ValidationController.validateSenha,
+                  ),
+                  const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _handleLogin,
                       style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          backgroundColor: const Color(0xff347FFF)),
-                      child: const Text(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: AppColors.primaryColor,
+                        elevation: 2,
+                      ),
+                      child: Text(
                         'Entrar',
-                        style: TextStyle(color: Color(0xffF2F2F2), fontSize: 18),
+                        style: AppTextStyles.headlineSmall() 
                       ),
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 20),
                   TextButton(
                     onPressed: () {
-                      // TODO: Navegar para a tela de recuperação de senha
-                       ScaffoldMessenger.of(context).showSnackBar(
-                         const SnackBar(content: Text('Funcionalidade "Esqueci minha senha" não implementada.')),
-                       );
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder<dynamic>(
+                          pageBuilder:
+                              (
+                                BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                              ) => const RedefinicaoSenhaScreen(),
+                          transitionsBuilder: (
+                            BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                            Widget child,
+                          ) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(1.0, 0.0),
+                                end: Offset.zero,
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeInOutQuint,
+                                ),
+                              ),
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                            );
+                          },
+                          transitionDuration: const Duration(
+                            milliseconds: 500,
+                          ),
+                        ),
+                      );
                     },
-                    child: const Text(
+                    child: Text(
                       'Esqueci minha senha',
-                      style: TextStyle(color: Color(0xffF2F2F2)),
+                      style: AppTextStyles.bodyMedium(color: AppColors.primaryColor),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      const Text(
+                      Text(
                         'Não tem uma conta? ',
-                        style: TextStyle(color: Color(0xffF2F2F2)),
+                        style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                       ),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             PageRouteBuilder<dynamic>(
-                              pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) => const CadastroScreen(),
-                              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                              pageBuilder:
+                                  (
+                                    BuildContext context,
+                                    Animation<double> animation,
+                                    Animation<double> secondaryAnimation,
+                                  ) => const CadastroScreen(),
+                              transitionsBuilder: (
+                                BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                                Widget child,
+                              ) {
                                 return SlideTransition(
                                   position: Tween<Offset>(
                                     begin: const Offset(1.0, 0.0),
                                     end: Offset.zero,
-                                  ).animate(CurvedAnimation(
-                                    parent: animation,
-                                    curve: Curves.easeInOutQuint,
-                                  )),
-                                  child: FadeTransition(opacity: animation, child: child),
+                                  ).animate(
+                                    CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeInOutQuint,
+                                    ),
+                                  ),
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
                                 );
                               },
-                              transitionDuration: const Duration(milliseconds: 500),
+                              transitionDuration: const Duration(
+                                milliseconds: 500,
+                              ),
                             ),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           'Cadastre-se',
-                          style: TextStyle(
-                            color: Color(0xff6CA0DC),
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
+                          style: AppTextStyles.bodyMedium(
+                            color: AppColors.primaryColor,
+                          ).copyWith(fontWeight: FontWeight.bold, decoration: TextDecoration.underline)
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
@@ -175,30 +234,42 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildTextFormField(String label, IconData icon, {bool isPassword = false, TextEditingController? controller, String? Function(String?)? validator, TextInputType? keyboardType}) {
+  Widget _buildTextFormField(
+    String label,
+    IconData icon, {
+    bool isPassword = false,
+    TextEditingController? controller,
+    String? Function(String?)? validator,
+    TextInputType? keyboardType,
+  }) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
+      style: AppTextStyles.bodyLarge(),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xffF2F2F2)),
-        prefixIcon: Icon(icon, color: const Color(0xffF2F2F2)),
+        labelStyle: AppTextStyles.bodyMedium(
+          color: AppColors.textSecondary,
+        ).copyWith(fontWeight: FontWeight.bold),
+        prefixIcon: Icon(icon, color: AppColors.icon),
+        errorStyle: AppTextStyles.bodyMedium(
+          color: AppColors.error,
+        ).copyWith(fontWeight: FontWeight.bold),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xff303131)),
+          borderSide: BorderSide(color: AppColors.inputBackground),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: BorderSide(color: AppColors.primaryColor),
         ),
-         errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1),
+        errorBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
         focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
         filled: true,
-        fillColor: const Color(0xff10100E),
+        fillColor: AppColors.inputBackground,
       ),
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
