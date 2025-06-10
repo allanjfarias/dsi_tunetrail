@@ -31,6 +31,7 @@ class Song {
       popularity: json['popularity'] as int,
     );
   }
+  
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'song_id': songId,
