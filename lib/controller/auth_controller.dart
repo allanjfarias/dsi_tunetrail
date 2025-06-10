@@ -12,7 +12,7 @@ class AuthController {
   final CrudRepository<Profile> profileRepository = CrudRepository<Profile>(
     table: 'profiles',
     fromJson: Profile.fromJson,
-    toJson: (Profile e) =>e.toJson(),
+    toJson: (Profile e) => e.toJson(),
   );
   final supa.SupabaseClient supaClient = supa.Supabase.instance.client;
 

@@ -1,8 +1,7 @@
-import '/models/playlist_songs_repository.dart';
+import '../models/playlist_songs_link.dart';
 import '/models/crud_repository.dart';
 import '/models/playlist.dart';
 import '/models/song.dart';
-
 
 class PlaylistController {
   final CrudRepository<Playlist> _playlistRepo;
@@ -13,15 +12,14 @@ class PlaylistController {
     required CrudRepository<Playlist> playlistRepo,
     required PlaylistSongRepository playlistSongRepo,
     required this.currentUserId,
-  }) : _playlistSongRepo = playlistSongRepo, _playlistRepo = playlistRepo;
+  }) : _playlistSongRepo = playlistSongRepo,
+       _playlistRepo = playlistRepo;
 
-  Future<Playlist> createPlaylist({
-    required String name,
-  }) {
+  Future<Playlist> createPlaylist({required String name}) {
     final Playlist playlist = Playlist(
       id: null,
       ownerId: currentUserId,
-      name: name
+      name: name,
     );
 
     return _playlistRepo.create(playlist);
@@ -45,6 +43,6 @@ class PlaylistController {
 
   Future<List<Playlist>> getMyPlaylists() async {
     final List<Playlist> all = await _playlistRepo.readAll();
-    return all.where( (Playlist p) => p.ownerId == currentUserId).toList();
+    return all.where((Playlist p) => p.ownerId == currentUserId).toList();
   }
 }

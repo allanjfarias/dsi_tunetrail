@@ -5,7 +5,7 @@ class PlaylistSongRepository {
   final SupabaseClient supabase;
 
   PlaylistSongRepository({SupabaseClient? client})
-      : supabase = client ?? Supabase.instance.client;
+    : supabase = client ?? Supabase.instance.client;
 
   Future<void> linkSongToPlaylist(String playlistId, String songId) async {
     try {
@@ -37,10 +37,12 @@ class PlaylistSongRepository {
           .select('song:song_id(*)')
           .eq('playlist_id', playlistId);
 
-
-      final List<Song> songs = (response as List<dynamic>)
-          .map((dynamic e) => Song.fromJson(e['song'] as Map<String, dynamic>))
-          .toList();
+      final List<Song> songs =
+          (response as List<dynamic>)
+              .map(
+                (dynamic e) => Song.fromJson(e['song'] as Map<String, dynamic>),
+              )
+              .toList();
 
       return songs;
     } catch (e) {
