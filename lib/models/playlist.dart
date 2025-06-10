@@ -3,11 +3,7 @@ class Playlist {
   final String ownerId;
   final String name;
 
-  Playlist({
-    this.id,
-    required this.name,
-    required this.ownerId,
-  });
+  Playlist({this.id, required this.name, required this.ownerId});
 
   factory Playlist.fromJson(Map<String, dynamic> json) {
     return Playlist(
@@ -16,7 +12,7 @@ class Playlist {
       name: json['name'] as String,
     );
   }
-  
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = <String, dynamic>{
       'owner_id': ownerId,
@@ -27,6 +23,4 @@ class Playlist {
     }
     return map;
   }
-
 }
- 
