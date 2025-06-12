@@ -3,11 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:app_links/app_links.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:tunetrail/view/buscar_screen.dart';
-import 'package:tunetrail/view/home_screen.dart';
+import 'view/buscar_screen.dart';
+import 'view/home_screen.dart';
+import 'view/profile_screen.dart';
+import 'view/edit_profile_screen.dart';
+import 'view/my_playlists_screen.dart';
+import 'view/create_playlist_screen.dart';
 import 'view/redef_senha_nova_senha.dart';
 import 'view/login.dart';
-
 
 // Declarar globalmente a chave do Navigator
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -72,6 +75,11 @@ class _MyAppState extends State<MyApp> {
       routes:<String, Widget Function(BuildContext)> {
         '/home_screen': (BuildContext context) => const HomeScreen(),
         '/buscar_screen': (BuildContext context) => const BuscarScreen(),
+        '/profile': (BuildContext context) => const ProfileScreen(),
+        '/edit_profile': (BuildContext context) => const EditProfileScreen(),
+        '/my_playlists': (BuildContext context) => const MyPlaylistsScreen(),
+        '/create_playlist': (BuildContext context) => const CreatePlaylistScreen(),
+        '/login': (BuildContext context) => const LoginScreen(),
       },
       onUnknownRoute: (RouteSettings settings) =>  MaterialPageRoute<void>(
         builder: (_) => Scaffold(
