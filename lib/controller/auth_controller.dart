@@ -73,6 +73,7 @@ class AuthController {
         dataNasc: dataNasc,
         genero: genero,
         id: newUser.id,
+        tipo: 'Usuário',
       );
 
       await profileRepository.create(profile);
