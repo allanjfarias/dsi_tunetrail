@@ -6,6 +6,7 @@ class Profile {
   final DateTime dataNasc;
   final String genero;
   final String? fotoUrl;
+  final String? tipo;
 
   Profile({
     required this.nome,
@@ -13,6 +14,7 @@ class Profile {
     required this.genero,
     this.id,
     this.fotoUrl,
+    this.tipo,
   });
 
   factory Profile.fromStringDate({
@@ -20,6 +22,7 @@ class Profile {
     required String dataNasc,
     required String genero,
     String? id,
+    String? tipo,
   }) {
     final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
@@ -28,6 +31,7 @@ class Profile {
       dataNasc: dateFormat.parse(dataNasc),
       genero: genero,
       id: id,
+      tipo: tipo,
     );
   }
 
@@ -37,6 +41,7 @@ class Profile {
       nome: json['nome'] as String,
       dataNasc: DateTime.parse(json['data_nasc'] as String),
       genero: json['genero'] as String,
+      tipo: json['tipo'] as String?,
     );
   }
 
@@ -46,6 +51,7 @@ class Profile {
       'nome': nome,
       'data_nasc': DateFormat('yyyy-MM-dd').format(dataNasc),
       'genero': genero,
+      'tipo': tipo,
     };
   }
 
