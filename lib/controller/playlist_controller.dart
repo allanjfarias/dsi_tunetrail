@@ -1,32 +1,30 @@
 import '../models/playlist_songs_link.dart';
-import '/models/crud_repository.dart';
-import '/models/playlist.dart';
-import '/models/song.dart';
+import '../models/playlist_repository.dart';
+import '../models/playlist.dart';
+import '../models/song.dart';
 
 class PlaylistController {
-  final CrudRepository<Playlist> _playlistRepo;
+  final PlaylistRepository playlistRepository;
   final PlaylistSongRepository _playlistSongRepo;
   final String currentUserId;
 
   PlaylistController({
-    required CrudRepository<Playlist> playlistRepo,
+    required this.playlistRepository,
     required PlaylistSongRepository playlistSongRepo,
     required this.currentUserId,
-  }) : _playlistSongRepo = playlistSongRepo,
-       _playlistRepo = playlistRepo;
+  }) : _playlistSongRepo = playlistSongRepo;
 
   Future<Playlist> createPlaylist({required String name}) {
     final Playlist playlist = Playlist(
-      id: null,
       ownerId: currentUserId,
       name: name,
     );
 
-    return _playlistRepo.create(playlist);
+    return playlistRepository.create(playlist);
   }
 
   Future<void> deletePlaylist(String playlistId) async {
-    await _playlistRepo.delete(playlistId);
+    await playlistRepository.delete(playlistId);
   }
 
   Future<void> addSongToPlaylist(String playlistId, String songId) {
@@ -42,7 +40,7 @@ class PlaylistController {
   }
 
   Future<List<Playlist>> getMyPlaylists() async {
-    final List<Playlist> all = await _playlistRepo.readAll();
+    final List<Playlist> all = await playlistRepository.readAll();
     return all.where((Playlist p) => p.ownerId == currentUserId).toList();
   }
 }
