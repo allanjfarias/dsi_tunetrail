@@ -11,9 +11,9 @@ class SongRepository {
     try {
       final List<Map<String, dynamic>> response = await supabase
           .from('songs')
-          .select()
-          .or('track_name.ilike.%$query%,artists.ilike.%$query%,album_name.ilike.%$query%');
-
+          .select('*, covers(image_url)')
+          .ilike('track_name', '%$query%')
+          .limit(10);
       return response.map(Song.fromJson).toList();
     } catch (e) {
       rethrow;
@@ -24,14 +24,12 @@ class SongRepository {
     try {
       final List<Map<String, dynamic>> response = await supabase
           .from('songs')
-          .select()
+          .select('*, covers(image_url)')
           .order('popularity', ascending: false)
           .limit(10);
-
       return response.map(Song.fromJson).toList();
     } catch (e) {
       rethrow;
     }
   }
 }
-

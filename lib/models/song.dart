@@ -22,16 +22,18 @@ class Song {
   });
 
   factory Song.fromJson(Map<String, dynamic> json) {
+    final String fullCoverUrl = (json['covers'] as Map<String, dynamic>?)?['image_url'] as String? ?? '';
+
     return Song(
       songId: json['id'] as String,
       name: json['track_name'] as String,
       artist: json['artists'] as String,
       album: json['album_name'] as String,
-      coverUrl: json['cover_id'] as String,
-      duration: (json['duration_ms'] as num).toDouble(),
+      coverUrl: fullCoverUrl,
+      duration: (json['duration_ms'] as num?)?.toDouble() ?? 0.0,
       genre: json['track_genre'] as String,
-      popularity: json['popularity'] as int,
-      explicit: json['explicit'] as bool,
+      popularity: json['popularity'] as int? ?? 0,
+      explicit: json['explicit'] as bool? ?? false,
     );
   }
 
@@ -41,7 +43,6 @@ class Song {
       'track_name': name,
       'artists': artist,
       'album_name': album,
-      'cover_id': coverUrl,
       'duration_ms': duration,
       'track_genre': genre,
       'popularity': popularity,
