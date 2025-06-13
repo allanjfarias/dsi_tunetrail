@@ -115,7 +115,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Playlist Icon
             Center(
               child: Container(
                 width: 120,
@@ -134,7 +133,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             ),
             const SizedBox(height: 32),
             
-            // Nome da Playlist Field
             Text(
               'Nome da playlist',
               style: AppTextStyles.subtitleMedium(),
@@ -169,7 +167,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             ),
             const SizedBox(height: 24),
             
-            // Descrição
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -209,7 +206,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             ),
             const SizedBox(height: 32),
             
-            // Create Button
             SizedBox(
               width: double.infinity,
               height: 56,
