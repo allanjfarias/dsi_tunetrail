@@ -62,7 +62,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _userProfile = updatedProfile;
         });
       } catch (e) {
-        // Handle error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro ao atualizar tipo de usuário: $e')),
         );
@@ -217,7 +216,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 children: <Widget>[
-                  // Profile Picture
                   GestureDetector(
                     onTap: _pickAndUploadImage,
                     child: Container(
@@ -244,16 +242,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 16),
                   
-                  // User Name
                   Text(
                     _userProfile?.nome ?? 'Nome do usuário',
                     style: AppTextStyles.headlineMedium(),
                   ),
                   const SizedBox(height: 32),
                   
-                  // Action Buttons
                   _buildActionButton('Editar perfil', () {
-                    Navigator.pushNamed(context, '/edit_profile');
+                    Navigator.pushNamed(context, 
+                      '/edit_profile').then((_) {
+                      _loadUserProfile();
+                    });
                   }),
                   const SizedBox(height: 16),
                   _buildActionButton('Minhas playlists', () {
@@ -272,7 +271,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }),
                   const SizedBox(height: 32),
                   
-                  // User Type Selection
                   Text(
                     'Quem você é por aqui?',
                     style: AppTextStyles.headlineSmall(),
@@ -313,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: AppColors.background,
         selectedItemColor: AppColors.primaryColor,
         unselectedItemColor: AppColors.textSecondary,
-        currentIndex: 2, // Profile tab
+        currentIndex: 2,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Buscar'),

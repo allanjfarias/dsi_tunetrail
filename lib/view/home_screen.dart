@@ -10,9 +10,7 @@ class HomeScreen extends StatefulWidget {
   }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
   
-
   // dados de exemplo para os carrosséis
   static const List<Map<String, String>> _eventosData = <Map<String, String>>[
     <String, String>{
@@ -154,7 +152,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         onTap: (int index) {
           setState(() {
-            _currentIndex = index;
           });
           switch (index) {
             case 0:
@@ -162,6 +159,12 @@ class _HomeScreenState extends State<HomeScreen> {
               break;
             case 1:
               Navigator.pushReplacementNamed(context, '/buscar_screen');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/profile');
+              break;
+            case 3:
+              // Eventos
               break;
           }
         },

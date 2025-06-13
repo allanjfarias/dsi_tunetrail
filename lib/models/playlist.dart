@@ -1,22 +1,22 @@
 class Playlist {
   final String? id;
   final String ownerId;
-  final String name;
+  final String title;
 
-  Playlist({this.id, required this.name, required this.ownerId});
+  Playlist({this.id, required this.title, required this.ownerId});
 
   factory Playlist.fromJson(Map<String, dynamic> json) {
     return Playlist(
       id: json['id'] as String?,
       ownerId: json['owner_id'] as String,
-      name: json['name'] as String,
+      title: json["title"] as String,
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = <String, dynamic>{
       'owner_id': ownerId,
-      'name': name,
+      'title': title,
     };
     if (id != null) {
       map['id'] = id;

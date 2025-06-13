@@ -7,6 +7,7 @@ import '../controller/playlist_controller.dart';
 import '../models/playlist_repository.dart';
 import '../models/playlist_songs_link.dart';
 import '../models/playlist.dart';
+import 'playlist_details_screen.dart';
 
 class MyPlaylistsScreen extends StatefulWidget {
   const MyPlaylistsScreen({super.key});
@@ -63,7 +64,7 @@ class _MyPlaylistsScreenState extends State<MyPlaylistsScreen> {
             style: AppTextStyles.headlineSmall(),
           ),
           content: Text(
-            'Tem certeza que deseja excluir a playlist "${playlist.name}"?',
+            'Tem certeza que deseja excluir a playlist "${playlist.title}"?',
             style: AppTextStyles.bodyMedium(),
           ),
           actions: <Widget>[
@@ -245,7 +246,7 @@ class _MyPlaylistsScreenState extends State<MyPlaylistsScreen> {
           ),
         ),
         title: Text(
-          playlist.name,
+          playlist.title,
           style: AppTextStyles.subtitleLarge(),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -288,9 +289,12 @@ class _MyPlaylistsScreenState extends State<MyPlaylistsScreen> {
           ],
         ),
         onTap: () {
-          // TODO: Navegar para a tela de detalhes da playlist
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Abrindo playlist: ${playlist.name}')),
+          // Navegar para a tela de detalhes da playlist
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => PlaylistDetailsScreen(playlist: playlist),
+            ),
           );
         },
       ),

@@ -40,8 +40,9 @@ class Profile {
       id: json['id'] as String?,
       nome: json['nome'] as String,
       dataNasc: DateTime.parse(json['data_nasc'] as String),
-      genero: json['genero'] as String,
-      tipo: json['tipo'] as String?,
+      genero: json["genero"] as String,
+      tipo: json["tipo"] as String?,
+      fotoUrl: json["foto_url"] as String?,
     );
   }
 
@@ -52,6 +53,7 @@ class Profile {
       'data_nasc': DateFormat('yyyy-MM-dd').format(dataNasc),
       'genero': genero,
       'tipo': tipo,
+      'foto_url': fotoUrl,
     };
   }
 

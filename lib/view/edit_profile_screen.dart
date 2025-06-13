@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tunetrail/models/user.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../controller/auth_controller.dart';
@@ -30,9 +31,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _loadUserProfile() async {
     try {
-      final user = _authController.usuarioLogado;
+      final User? user = _authController.usuarioLogado;
       if (user != null) {
-        final profile = await _authController.profileRepository.readOne(user.id);
+        final Profile? profile = await _authController.profileRepository.readOne(user.id);
         if (profile != null) {
           setState(() {
             _userProfile = profile;
@@ -59,7 +60,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.dark(
@@ -102,7 +103,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     try {
-      final updatedProfile = Profile(
+      final Profile updatedProfile = Profile(
         id: _userProfile!.id,
         nome: _nameController.text.trim(),
         dataNasc: _selectedDate!,
@@ -151,7 +152,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'Editar perfil',
           style: AppTextStyles.headlineMedium(color: AppColors.primaryColor),
         ),
-        actions: [
+        actions: <Widget>[
           if (_isSaving)
             const Padding(
               padding: EdgeInsets.all(16.0),
@@ -184,7 +185,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   const SizedBox(height: 24),
                   
                   // Nome Field

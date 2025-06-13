@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tunetrail/models/user.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../controller/auth_controller.dart';
@@ -33,7 +34,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
       return;
     }
 
-    final user = _authController.usuarioLogado;
+    final User? user = _authController.usuarioLogado;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Usuário não encontrado')),
@@ -46,8 +47,8 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
     });
 
     try {
-      final playlist = Playlist(
-        name: _nameController.text.trim(),
+      final Playlist playlist = Playlist(
+        title: _nameController.text.trim(),
         ownerId: user.id,
       );
 
@@ -86,7 +87,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
           'Criar playlist',
           style: AppTextStyles.headlineMedium(color: AppColors.primaryColor),
         ),
-        actions: [
+        actions: <Widget>[
           if (_isCreating)
             const Padding(
               padding: EdgeInsets.all(16.0),
@@ -113,8 +114,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Playlist Icon
+          children: <Widget>[
             Center(
               child: Container(
                 width: 120,
@@ -122,7 +122,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                 decoration: BoxDecoration(
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [AppColors.cardShadow],
+                  boxShadow: <BoxShadow>[AppColors.cardShadow],
                 ),
                 child: const Icon(
                   Icons.queue_music,
@@ -133,7 +133,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             ),
             const SizedBox(height: 32),
             
-            // Nome da Playlist Field
             Text(
               'Nome da playlist',
               style: AppTextStyles.subtitleMedium(),
@@ -168,7 +167,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             ),
             const SizedBox(height: 24),
             
-            // Descrição
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -181,9 +179,9 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Row(
-                    children: [
+                    children: <Widget>[
                       const Icon(
                         Icons.info_outline,
                         color: AppColors.primaryColor,
@@ -200,7 +198,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                   Text(
                     '• Organize suas músicas favoritas em playlists personalizadas\n'
                     '• Adicione e remova músicas a qualquer momento\n'
-                    '• Compartilhe suas playlists com outros usuários\n'
                     '• Crie quantas playlists quiser',
                     style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                   ),
@@ -209,7 +206,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             ),
             const SizedBox(height: 32),
             
-            // Create Button
             SizedBox(
               width: double.infinity,
               height: 56,
@@ -249,4 +245,3 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
     super.dispose();
   }
 }
-
