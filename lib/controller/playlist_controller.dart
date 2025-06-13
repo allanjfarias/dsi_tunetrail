@@ -17,7 +17,7 @@ class PlaylistController {
   Future<Playlist> createPlaylist({required String name}) {
     final Playlist playlist = Playlist(
       ownerId: currentUserId,
-      name: name,
+      title: name,
     );
 
     return playlistRepository.create(playlist);
@@ -27,8 +27,10 @@ class PlaylistController {
     await playlistRepository.delete(playlistId);
   }
 
-  Future<void> addSongToPlaylist(String playlistId, String songId) {
-    return _playlistSongRepo.linkSongToPlaylist(playlistId, songId);
+  Future<void> addSongToPlaylist(String playlistId, String songId) async {
+    // Buscar a próxima posição disponível
+    final int nextPosition = await _playlistSongRepo.getNextPosition(playlistId);
+    return _playlistSongRepo.linkSongToPlaylist(playlistId, songId, nextPosition);
   }
 
   Future<void> removeSongFromPlaylist(String playlistId, String songId) {
@@ -39,8 +41,20 @@ class PlaylistController {
     return _playlistSongRepo.fetchSongsFromPlaylist(playlistId);
   }
 
+  Future<void> updateSongPosition(String playlistId, String songId, int newPosition) {
+    return _playlistSongRepo.updateSongPosition(playlistId, songId, newPosition);
+  }
+
+  Future<void> reorderPlaylistSongs(String playlistId, List<String> songIds) async {
+    // Atualiza a posição de cada música baseada na nova ordem
+    for (int i = 0; i < songIds.length; i++) {
+      await _playlistSongRepo.updateSongPosition(playlistId, songIds[i], i);
+    }
+  }
+
   Future<List<Playlist>> getMyPlaylists() async {
     final List<Playlist> all = await playlistRepository.readAll();
     return all.where((Playlist p) => p.ownerId == currentUserId).toList();
   }
 }
+

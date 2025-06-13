@@ -253,7 +253,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   
                   // Action Buttons
                   _buildActionButton('Editar perfil', () {
-                    Navigator.pushNamed(context, '/edit_profile');
+                    Navigator.pushNamed(context, 
+                      '/edit_profile').then((_) {
+                      _loadUserProfile();
+                    });
                   }),
                   const SizedBox(height: 16),
                   _buildActionButton('Minhas playlists', () {
