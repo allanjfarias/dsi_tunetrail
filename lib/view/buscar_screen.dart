@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../models/song.dart';
@@ -97,6 +98,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
   }
 
   String _formatDuration(double durationMs) {
+    if (durationMs == 0) return '0:00';
     final int totalSeconds = (durationMs / 1000).round();
     final int minutes = totalSeconds ~/ 60;
     final int seconds = totalSeconds % 60;
@@ -310,14 +312,22 @@ class _BuscarScreenState extends State<BuscarScreen> {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
             borderRadius: BorderRadius.circular(8),
+            // Use CachedNetworkImage para carregar a capa da música
+            image: song.coverUrl.isNotEmpty
+                ? DecorationImage(
+                    image: CachedNetworkImageProvider(song.coverUrl),
+                    fit: BoxFit.cover,
+                  )
+                : null, // Se não houver coverUrl, não define DecorationImage
           ),
-          child: const Icon(
-            Icons.music_note,
-            color: AppColors.textPrimary,
-            size: 24,
-          ),
+          child: song.coverUrl.isEmpty
+              ? const Icon(
+                  Icons.music_note,
+                  color: AppColors.textPrimary,
+                  size: 24,
+                )
+              : null, // Se houver coverUrl, não exibe o ícone
         ),
         title: Text(
           song.name,
@@ -329,7 +339,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              song.artist,
+              song.artist.replaceAll(';', ', '),
               style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -372,11 +382,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
                   size: 28,
                 ),
               )
-            : const Icon(
-                Icons.play_circle_outline,
-                color: AppColors.primaryColor,
-                size: 28,
-              ),
+            : null, // Remove o botão de Play
         onTap: widget.selectMode ? () => _selectSong(song) : null,
       ),
     );
@@ -479,4 +485,3 @@ class _BuscarScreenState extends State<BuscarScreen> {
     );
   }
 }
-
