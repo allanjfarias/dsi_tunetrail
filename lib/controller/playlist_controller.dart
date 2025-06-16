@@ -27,8 +27,14 @@ class PlaylistController {
     await playlistRepository.delete(playlistId);
   }
 
+  Future<Playlist> updatePlaylist(Playlist playlist) async {
+    if (playlist.id == null) {
+      throw Exception('ID da playlist é obrigatório para atualização');
+    }
+    return await playlistRepository.update(playlist.id!, playlist);
+  }
+
   Future<void> addSongToPlaylist(String playlistId, String songId) async {
-    // Buscar a próxima posição disponível
     final int nextPosition = await _playlistSongRepo.getNextPosition(playlistId);
     return _playlistSongRepo.linkSongToPlaylist(playlistId, songId, nextPosition);
   }
@@ -46,7 +52,6 @@ class PlaylistController {
   }
 
   Future<void> reorderPlaylistSongs(String playlistId, List<String> songIds) async {
-    // Atualiza a posição de cada música baseada na nova ordem
     for (int i = 0; i < songIds.length; i++) {
       await _playlistSongRepo.updateSongPosition(playlistId, songIds[i], i);
     }
@@ -57,4 +62,3 @@ class PlaylistController {
     return all.where((Playlist p) => p.ownerId == currentUserId).toList();
   }
 }
-

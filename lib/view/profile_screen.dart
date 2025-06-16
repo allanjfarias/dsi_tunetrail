@@ -62,6 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _userProfile = updatedProfile;
         });
       } catch (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro ao atualizar tipo de usuário: $e')),
         );
@@ -122,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _userProfile = updatedProfile;
           _isLoading = false;
         });
-
+} else {if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Foto de perfil atualizada com sucesso!')),
         );
@@ -131,6 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _isLoading = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao atualizar foto de perfil: $e')),
       );
@@ -269,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildActionButton('Criar playlist', () {
                     Navigator.pushNamed(context, '/create_playlist');
                   }),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 25),
                   
                   Text(
                     'Quem você é por aqui?',

@@ -35,30 +35,30 @@ class PlaylistSongRepository {
     try {
       final List<Map<String, dynamic>> response = await supabase
           .from('playlist_songs')
-          .select('song:song_id(*)')
+          .select('''
+            songs!inner(
+              id,
+              track_name,
+              artists,
+              album_name,
+              duration_ms,
+              track_genre,
+              popularity,
+              explicit,
+              covers(image_url)
+            ),
+            position
+          ''')
           .eq('playlist_id', playlistId)
-          .order('position', ascending: true);
+          .order('position');
 
-      final List<Song> songs =
-          (response as List<dynamic>)
-              .map(
-                (dynamic e) => Song.fromJson(e['song'] as Map<String, dynamic>),
-              )
-              .toList();
-
-      return songs;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> updateSongPosition(String playlistId, String songId, int newPosition) async {
-    try {
-      await supabase
-          .from('playlist_songs')
-          .update({'position': newPosition})
-          .eq('playlist_id', playlistId)
-          .eq('song_id', songId);
+      return response.map((Map<String, dynamic> row) {
+        final Map<String, dynamic> songData = row['songs'] as Map<String, dynamic>;
+        if (songData['covers'] != null) {
+          songData['cover_url'] = songData['covers']['image_url'];
+        }
+        return Song.fromJson(songData);
+      }).toList();
     } catch (e) {
       rethrow;
     }
@@ -79,8 +79,19 @@ class PlaylistSongRepository {
 
       return (response.first['position'] as int) + 1;
     } catch (e) {
+      return 0;
+    }
+  }
+
+  Future<void> updateSongPosition(String playlistId, String songId, int newPosition) async {
+    try {
+      await supabase
+          .from('playlist_songs')
+          .update({'position': newPosition})
+          .eq('playlist_id', playlistId)
+          .eq('song_id', songId);
+    } catch (e) {
       rethrow;
     }
   }
 }
-

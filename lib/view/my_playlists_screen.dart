@@ -47,6 +47,7 @@ class _MyPlaylistsScreenState extends State<MyPlaylistsScreen> {
       setState(() {
         _isLoading = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao carregar playlists: $e')),
       );
@@ -93,10 +94,11 @@ class _MyPlaylistsScreenState extends State<MyPlaylistsScreen> {
         setState(() {
           _playlists.removeWhere((Playlist p) => p.id == playlist.id);
         });
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Playlist excluída com sucesso!')),
         );
-      } catch (e) {
+      } catch (e) {if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro ao excluir playlist: $e')),
         );
@@ -126,7 +128,7 @@ class _MyPlaylistsScreenState extends State<MyPlaylistsScreen> {
           IconButton(
             onPressed: () {
               Navigator.pushNamed(context, '/create_playlist').then((_) {
-                _loadPlaylists(); // Recarrega as playlists quando volta da tela de criar
+                _loadPlaylists();
               });
             },
             icon: const Icon(
@@ -236,13 +238,11 @@ class _MyPlaylistsScreenState extends State<MyPlaylistsScreen> {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(
-            Icons.queue_music,
-            color: AppColors.textPrimary,
-            size: 30,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: _buildPlaylistCover(playlist),
           ),
         ),
         title: Text(
@@ -289,7 +289,6 @@ class _MyPlaylistsScreenState extends State<MyPlaylistsScreen> {
           ],
         ),
         onTap: () {
-          // Navegar para a tela de detalhes da playlist
           Navigator.push(
             context,
             MaterialPageRoute<void>(
@@ -300,5 +299,45 @@ class _MyPlaylistsScreenState extends State<MyPlaylistsScreen> {
       ),
     );
   }
-}
 
+  Widget _buildPlaylistCover(Playlist playlist) {
+    if (playlist.coverUrl != null && playlist.coverUrl!.isNotEmpty) {
+      return Image.network(
+        playlist.coverUrl!,
+        fit: BoxFit.cover,
+        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) => _buildDefaultCover(),
+        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.textPrimary,
+                strokeWidth: 2,
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      return _buildDefaultCover();
+    }
+  }
+
+  Widget _buildDefaultCover() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Icon(
+        Icons.queue_music,
+        color: AppColors.textPrimary,
+        size: 30,
+      ),
+    );
+  }
+}
