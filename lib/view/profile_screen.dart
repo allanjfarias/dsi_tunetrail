@@ -248,8 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _userProfile?.nome ?? 'Nome do usuário',
                     style: AppTextStyles.headlineMedium(),
                   ),
-                  const SizedBox(height: 32),
-                  
+                  const SizedBox(height: 25),
                   _buildActionButton('Editar perfil', () {
                     Navigator.pushNamed(context, 
                       '/edit_profile').then((_) {
@@ -260,6 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildActionButton('Minhas playlists', () {
                     Navigator.pushNamed(context, '/my_playlists');
                   }),
+/*
                   const SizedBox(height: 16),
                   _buildActionButton('Favoritos', () {
                     // TODO: Implementar tela de favoritos
@@ -267,6 +267,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
                     );
                   }),
+*/
                   const SizedBox(height: 16),
                   _buildActionButton('Criar playlist', () {
                     Navigator.pushNamed(context, '/create_playlist');
