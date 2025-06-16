@@ -48,6 +48,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       setState(() {
         _isLoading = false;
       });
+      
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao carregar perfil: $e')),
       );
@@ -119,15 +121,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _isSaving = false;
       });
 
+    if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Perfil atualizado com sucesso!')),
       );
 
+      if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
       setState(() {
         _isSaving = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao atualizar perfil: $e')),
       );

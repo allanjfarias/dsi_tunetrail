@@ -1,30 +1,61 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tunetrail/models/playlist.dart';
 import 'package:tunetrail/models/crud_repository.dart';
 
 class PlaylistRepository extends CrudRepository<Playlist> {
   PlaylistRepository({
-    SupabaseClient? supabaseClient,
+    super.supabaseClient,
   }) : super(
           table: 'playlists',
           fromJson: Playlist.fromJson,
-          toJson: (playlist) => playlist.toJson(),
-          supabaseClient: supabaseClient,
+          toJson: (Playlist playlist) => playlist.toJson(),
         );
 
-  Future<List<Playlist>> readByOwnerId(String ownerId) async {
+  @override
+  Future<List<Playlist>> readAll() async {
     try {
       final List<Map<String, dynamic>> result = await supabase
           .from(table)
-          .select()
-          .eq('owner_id', ownerId);
-      return (result as List<dynamic>)
-          .map((dynamic e) => fromJson(e as Map<String, dynamic>))
-          .toList();
+          .select('''
+            *,
+            profiles!inner(nome, foto_url)
+          ''');
+      return (result as List<dynamic>).map((dynamic item) {
+        final Map<String, dynamic> playlistData = item as Map<String, dynamic>;
+        final Map<String, dynamic>? profileData = playlistData['profiles'] as Map<String, dynamic>?;
+        
+        return fromJson(<String, dynamic>{
+          ...playlistData,
+          'owner_name': profileData?['nome'],
+          'owner_avatar_url': profileData?['foto_url'],
+        });
+      }).toList();
     } catch (e) {
       rethrow;
     }
   }
-}
+  Future<List<Playlist>> readByOwnerId(String ownerId) async {
+    try {
+      final List<Map<String, dynamic>> result = await supabase
+          .from(table)
+          .select('''
+            *,
+            profiles!inner(nome, foto_url)
+          ''')
+          .eq('owner_id', ownerId);
+      return (result as List<dynamic>).map((dynamic item) {
+        final Map<String, dynamic> playlistData = item as Map<String, dynamic>;
+        final Map<String, dynamic>? profileData = playlistData['profiles'] as Map<String, dynamic>?;
+        
+        return fromJson(<String, dynamic>{
+          ...playlistData,
+          'owner_name': profileData?['nome'],
+          'owner_avatar_url': profileData?['foto_url'],
+        });
+      }).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
 
+}
 

@@ -45,14 +45,17 @@ class _BuscarScreenState extends State<BuscarScreen> {
     });
     try {
       final List<Song> popularSongs = await _songRepository.fetchPopularSongs();
+      if (!mounted) return;
       setState(() {
         _searchResults = popularSongs;
       });
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao carregar músicas populares: $e')),
       );
     } finally {
+      if (!mounted) {}
       setState(() {
         _isLoading = false;
       });
@@ -102,7 +105,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
     final int totalSeconds = (durationMs / 1000).round();
     final int minutes = totalSeconds ~/ 60;
     final int seconds = totalSeconds % 60;
-    return '${minutes}:${seconds.toString().padLeft(2, '0')}';
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -313,13 +316,12 @@ class _BuscarScreenState extends State<BuscarScreen> {
           height: 50,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            // Use CachedNetworkImage para carregar a capa da música
             image: song.coverUrl.isNotEmpty
                 ? DecorationImage(
                     image: CachedNetworkImageProvider(song.coverUrl),
                     fit: BoxFit.cover,
                   )
-                : null, // Se não houver coverUrl, não define DecorationImage
+                : null,
           ),
           child: song.coverUrl.isEmpty
               ? const Icon(
@@ -327,7 +329,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
                   color: AppColors.textPrimary,
                   size: 24,
                 )
-              : null, // Se houver coverUrl, não exibe o ícone
+              : null,
         ),
         title: Text(
           song.name,
@@ -382,7 +384,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
                   size: 28,
                 ),
               )
-            : null, // Remove o botão de Play
+            : null,
         onTap: widget.selectMode ? () => _selectSong(song) : null,
       ),
     );
