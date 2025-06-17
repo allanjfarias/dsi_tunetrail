@@ -232,13 +232,12 @@ class _BuscarScreenState extends State<BuscarScreen> {
                     Navigator.pushReplacementNamed(context, '/home_screen');
                     break;
                   case 1:
-                    Navigator.pushReplacementNamed(context, '/buscar_screen');
                     break;
                   case 2:
                     Navigator.pushReplacementNamed(context, '/profile');
                     break;
                   case 3:
-                    // Eventos
+                    Navigator.pushReplacementNamed(context, '/eventos_screen');
                     break;
                 }
               },

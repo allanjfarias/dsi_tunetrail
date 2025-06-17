@@ -335,7 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             case 2:
               break;
             case 3:
-              // Eventos
+              Navigator.pushReplacementNamed(context, '/eventos_screen');
               break;
           }
         },
