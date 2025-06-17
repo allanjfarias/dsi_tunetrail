@@ -155,7 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
           });
           switch (index) {
             case 0:
-              Navigator.pushReplacementNamed(context, '/home_screen');
               break;
             case 1:
               Navigator.pushReplacementNamed(context, '/buscar_screen');
@@ -164,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushReplacementNamed(context, '/profile');
               break;
             case 3:
-              // Eventos
+              Navigator.pushReplacementNamed(context, '/eventos_screen');
               break;
           }
         },

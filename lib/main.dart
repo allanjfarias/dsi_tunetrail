@@ -7,6 +7,7 @@ import 'view/buscar_screen.dart';
 import 'view/home_screen.dart';
 import 'view/profile_screen.dart';
 import 'view/edit_profile_screen.dart';
+import 'view/events_screen.dart';
 import 'view/my_playlists_screen.dart';
 import 'view/create_playlist_screen.dart';
 import 'view/redef_senha_nova_senha.dart';
@@ -75,11 +76,12 @@ class _MyAppState extends State<MyApp> {
       routes:<String, Widget Function(BuildContext)> {
         '/home_screen': (BuildContext context) => const HomeScreen(),
         '/buscar_screen': (BuildContext context) => const BuscarScreen(),
+        '/eventos_screen': (BuildContext context) => const  MapEventScreen(),
         '/profile': (BuildContext context) => const ProfileScreen(),
         '/edit_profile': (BuildContext context) => const EditProfileScreen(),
         '/my_playlists': (BuildContext context) => const MyPlaylistsScreen(),
         '/create_playlist': (BuildContext context) => const CreatePlaylistScreen(),
-        '/login': (BuildContext context) => const LoginScreen(),
+        '/login': (BuildContext context) => const LoginScreen(),        
       },
       onUnknownRoute: (RouteSettings settings) =>  MaterialPageRoute<void>(
         builder: (_) => Scaffold(
