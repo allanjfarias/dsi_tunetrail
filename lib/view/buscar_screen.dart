@@ -190,7 +190,13 @@ class _BuscarScreenState extends State<BuscarScreen> {
                                           Navigator.pushNamed(context, '/trending_artists');
                                          }
                                       ),
-                                      _buildCategoryItem('Músicas em alta', Icons.trending_up_rounded),
+                                      _buildCategoryItem(
+                                        'Músicas em alta',
+                                         Icons.trending_up_rounded,
+                                         onTap: () {
+                                          Navigator.pushNamed(context, '/trending_songs');
+                                         }
+                                      ),
                                       _buildCategoryItem('Novos lançamentos', Icons.new_releases_rounded),
                                       _buildCategoryItem('Gêneros musicais', Icons.music_note_rounded),
                                     ],
