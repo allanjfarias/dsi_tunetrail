@@ -7,8 +7,9 @@ import '../models/song_repository.dart';
 
 class BuscarScreen extends StatefulWidget {
   final bool selectMode;
+  final String? initialSearchQuery;
   
-  const BuscarScreen({super.key, this.selectMode = false});
+  const BuscarScreen({super.key, this.selectMode = false, this.initialSearchQuery,});
 
   @override
   State<BuscarScreen> createState() => _BuscarScreenState();
@@ -34,7 +35,12 @@ class _BuscarScreenState extends State<BuscarScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.selectMode) {
+    if (widget.initialSearchQuery != null && widget.initialSearchQuery!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _searchController.text = widget.initialSearchQuery!;
+        _performSearch(widget.initialSearchQuery!);
+      });
+    } else if (widget.selectMode) {
       _loadPopularSongs();
     }
   }

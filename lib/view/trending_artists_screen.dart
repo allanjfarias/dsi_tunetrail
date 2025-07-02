@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tunetrail/view/buscar_screen.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../models/song_repository.dart';
@@ -65,9 +66,13 @@ class _TrendingArtistsScreenState extends State<TrendingArtistsScreen> {
                 leading: const Icon(Icons.person, color: AppColors.primaryColor),
                 title: Text(artist, style: AppTextStyles.subtitleMedium()),
                 onTap: () {
-                  // Futuramente exibir a lista de musicas do artista
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Exibindo músicas de: $artist')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BuscarScreen(
+                        initialSearchQuery: artist,
+                      ),
+                    ),
                   );
                 },
               );
