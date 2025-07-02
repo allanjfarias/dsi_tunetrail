@@ -63,4 +63,39 @@ class SongRepository {
       rethrow;
     }
   }
+
+  Future<List<String>> fetchUniqueGenres() async {
+    try {
+      final List<Map<String, dynamic>> response = await supabase
+        .from('songs')
+        .select('track_genre');
+      final Set<String> uniqueGenres = <String>{};
+      for (final Map<String, dynamic> song in response) {
+        final String genre = song['track_genre'] as String;
+        if (genre.isNotEmpty) {
+          uniqueGenres.add(genre);
+        }
+      }
+      final List<String> sortedGenres = uniqueGenres.toList()..sort();
+      return sortedGenres;
+    } catch (e) {
+      debugPrint('Erro em fetchUniqueGenres: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Song>> fetchSongsByGenre(String genre) async {
+    try {
+      final List<Map<String, dynamic>> response = await supabase
+        .from('songs')
+        .select('*, covers(image_url)')
+        .eq('track_genre', genre)
+        .order('popularity', ascending: false)
+        .limit(100);
+      return response.map(Song.fromJson).toList();
+    } catch (e) {
+      debugPrint('Erro em fetchSongsByGenre: $e');
+      rethrow;
+    }
+  }
 }

@@ -14,6 +14,7 @@ import 'view/redef_senha_nova_senha.dart';
 import 'view/login.dart';
 import 'view/trending_artists_screen.dart';
 import 'view/trending_songs_screen.dart';
+import 'view/genres_screen.dart';
 
 // Declarar globalmente a chave do Navigator
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -85,7 +86,8 @@ class _MyAppState extends State<MyApp> {
         '/create_playlist': (BuildContext context) => const CreatePlaylistScreen(),
         '/login': (BuildContext context) => const LoginScreen(),   
         '/trending_artists': (BuildContext context) => const TrendingArtistsScreen(),
-        '/trending_songs': (BuildContext context) => const TrendingSongsScreen(),     
+        '/trending_songs': (BuildContext context) => const TrendingSongsScreen(),
+        '/genres' : (BuildContext context) => const GenresScreen(),     
       },
       onUnknownRoute: (RouteSettings settings) =>  MaterialPageRoute<void>(
         builder: (_) => Scaffold(

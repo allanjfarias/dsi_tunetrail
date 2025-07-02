@@ -216,7 +216,13 @@ class _BuscarScreenState extends State<BuscarScreen> {
                                           );
                                          }
                                       ),
-                                      _buildCategoryItem('Gêneros musicais', Icons.music_note_rounded),
+                                      _buildCategoryItem(
+                                        'Gêneros musicais',
+                                         Icons.music_note_rounded,
+                                         onTap: () {
+                                          Navigator.pushNamed(context, '/genres');
+                                         }
+                                      ),
                                     ],
                                   ),
                                 ),
