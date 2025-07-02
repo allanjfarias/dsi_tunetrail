@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tunetrail/controller/auth_controller.dart';
+import 'package:tunetrail/controller/comments_controller.dart';
+import 'package:tunetrail/models/comments.dart';
+import 'package:tunetrail/models/crud_repository.dart';
+import 'dialogs/comments_dialog.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../models/song_repository.dart';
@@ -15,12 +20,31 @@ class GenreSongsScreen extends StatefulWidget {
 
 class _GenreSongsScreenState extends State<GenreSongsScreen> {
   final SongRepository _songRepository = SongRepository();
+  final AuthController _authController = AuthController();
+  late final CommentController _commentController;
   late Future<List<Song>> _genreSongsFuture;
+
+  void _showCommentsDialog(Song song) {
+    showDialog(
+      context: context,
+      builder: (context) => CommentsDialog(
+        song: song,
+        commentController: _commentController, 
+        userId: _authController.usuarioLogado!.id),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     _genreSongsFuture = _songRepository.fetchSongsByGenre(widget.genre);
+    _commentController = CommentController(
+      CrudRepository<Comment>(
+        table: 'comments',
+        fromJson: Comment.fromJson,
+        toJson: (Comment c) => c.toJson(),
+      ),
+    );
   }
 
   String _formatArtists(String artists) {
@@ -80,7 +104,7 @@ class _GenreSongsScreenState extends State<GenreSongsScreen> {
                   title: Text(song.name, style: AppTextStyles.subtitleMedium(), maxLines: 1, overflow: TextOverflow.ellipsis),
                   subtitle: Text(_formatArtists(song.artist), style: AppTextStyles.bodyMedium(color: AppColors.textSecondary), maxLines: 1, overflow: TextOverflow.ellipsis),
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tocando: ${song.name}')));
+                    _showCommentsDialog(song);
                   },
                 ),
               );

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tunetrail/controller/auth_controller.dart';
+import 'package:tunetrail/controller/comments_controller.dart';
+import 'package:tunetrail/models/comments.dart';
+import 'package:tunetrail/models/crud_repository.dart';
+import 'dialogs/comments_dialog.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../models/song_repository.dart';
@@ -14,12 +19,32 @@ class TrendingSongsScreen extends StatefulWidget {
 
 class _TrendingSongsScreenState extends State<TrendingSongsScreen> {
   final SongRepository _songRepository = SongRepository();
+  final AuthController _authController = AuthController();
+  late final CommentController _commentController;
   late Future<List<Song>> _trendingSongsFuture;
+
+  void _showCommentsDialog(Song song) {
+    showDialog(
+      context: context,
+      builder: (context) => CommentsDialog(
+        song: song,
+        commentController: _commentController,
+        userId: _authController.usuarioLogado!.id,
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     _trendingSongsFuture = _songRepository.fetchPopularSongs();
+    _commentController = CommentController(
+      CrudRepository<Comment>(
+        table: 'comments',
+        fromJson: Comment.fromJson,
+        toJson: (Comment c) => c.toJson(),
+      ),
+    );
   }
   String _formatArtists(String artists) {
     return artists.replaceAll(';', ', ');
@@ -90,10 +115,7 @@ class _TrendingSongsScreenState extends State<TrendingSongsScreen> {
                   title: Text(song.name, style: AppTextStyles.subtitleMedium(), maxLines: 1, overflow: TextOverflow.ellipsis,),
                   subtitle: Text(_formatArtists(song.artist), style: AppTextStyles.bodyMedium(color: AppColors.textSecondary), maxLines: 1, overflow: TextOverflow.ellipsis,),
                   onTap: () {
-                    // Futuramente mais detalhes
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('detalhes: ${song.name}')),
-                    );
+                    _showCommentsDialog(song);
                   },
                 ),
               );
