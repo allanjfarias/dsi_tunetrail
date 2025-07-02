@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tunetrail/controller/auth_controller.dart';
+import 'package:tunetrail/controller/comments_controller.dart';
+import 'package:tunetrail/models/comments.dart';
+import 'package:tunetrail/models/crud_repository.dart';
+import 'dialogs/comments_dialog.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../models/song.dart';
@@ -26,12 +31,32 @@ class _BuscarScreenState extends State<BuscarScreen> {
   final SearchHistoryController _historyController = SearchHistoryController();
   List<String> _recentSearches = <String>[];
   final FocusNode _searchFocusNode = FocusNode();
+  final AuthController _authController = AuthController();
+  late final CommentController _commentController;
+
+  void _showCommentsDialog(Song song) {
+  showDialog(
+    context: context,
+    builder: (context) => CommentsDialog(
+      song: song,
+      commentController: _commentController,
+      userId: _authController.usuarioLogado!.id,
+    ),
+  );
+}
 
   @override
   void initState() {
     super.initState();
     _loadRecentSearches();
     _searchFocusNode.addListener(_onSearchFocusChange);
+    _commentController = CommentController(
+      CrudRepository<Comment>(
+        table: 'comments',
+        fromJson: Comment.fromJson,
+        toJson: (Comment c) => c.toJson(),
+      ),
+    );
     if (widget.initialSearchQuery != null && widget.initialSearchQuery!.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _searchController.text = widget.initialSearchQuery!;
@@ -464,7 +489,9 @@ class _BuscarScreenState extends State<BuscarScreen> {
                 ),
               )
             : null,
-        onTap: widget.selectMode ? () => _selectSong(song) : null,
+        onTap: widget.selectMode
+          ? () => _selectSong(song)
+          : () => _showCommentsDialog(song),
       ),
     );
   }
