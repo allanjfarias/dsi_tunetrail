@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/song.dart';
 
@@ -8,14 +9,20 @@ class SongRepository {
       : supabase = client ?? Supabase.instance.client;
 
   Future<List<Song>> searchSongs(String query) async {
-    try {
+    try{
+      final String trimmedQuery = query.trim();
+      if (query.trim().isEmpty) {
+        return <Song>[];
+      }
+      final String filter = 'track_name.ilike.%$trimmedQuery%,artists.ilike.%$trimmedQuery%';
       final List<Map<String, dynamic>> response = await supabase
-          .from('songs')
-          .select('*, covers(image_url)')
-          .ilike('track_name', '%$query%')
-          .limit(10);
+        .from('songs')
+        .select('*, covers(image_url)')
+        .or(filter)
+        .limit(20);
       return response.map(Song.fromJson).toList();
     } catch (e) {
+      debugPrint('Erro em searchSongs: $e');
       rethrow;
     }
   }
