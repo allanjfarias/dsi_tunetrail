@@ -197,7 +197,25 @@ class _BuscarScreenState extends State<BuscarScreen> {
                                           Navigator.pushNamed(context, '/trending_songs');
                                          }
                                       ),
-                                      _buildCategoryItem('Novos lançamentos', Icons.new_releases_rounded),
+                                      _buildCategoryItem(
+                                        'Novos lançamentos',
+                                         Icons.new_releases_rounded,
+                                         onTap: () {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Em breve: Novos Lançamentos!',
+                                                style: AppTextStyles.bodyMedium(color: AppColors.textPrimary),
+                                              ),
+                                              backgroundColor: AppColors.primaryColor,
+                                              behavior: SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          );
+                                         }
+                                      ),
                                       _buildCategoryItem('Gêneros musicais', Icons.music_note_rounded),
                                     ],
                                   ),
