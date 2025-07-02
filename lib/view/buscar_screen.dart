@@ -4,6 +4,7 @@ import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../models/song.dart';
 import '../models/song_repository.dart';
+import '../controller/search_history_controller.dart';
 
 class BuscarScreen extends StatefulWidget {
   final bool selectMode;
@@ -22,26 +23,69 @@ class _BuscarScreenState extends State<BuscarScreen> {
   bool _isSearching = false;
   bool _isLoading = false;
   final SongRepository _songRepository = SongRepository();
-  
-  // Exemplo de busca recente
-  final List<String> recentSearches = <String>[
-    'The Weeknd',
-    'Pop Internacional',
-    'Rock Classics',
-    'Dua Lipa',
-    'Indie 2024'
-  ];
+  final SearchHistoryController _historyController = SearchHistoryController();
+  List<String> _recentSearches = <String>[];
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    _loadRecentSearches();
+    _searchFocusNode.addListener(_onSearchFocusChange);
     if (widget.initialSearchQuery != null && widget.initialSearchQuery!.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _searchController.text = widget.initialSearchQuery!;
-        _performSearch(widget.initialSearchQuery!);
+        _fetchSearchResults(widget.initialSearchQuery!);
       });
     } else if (widget.selectMode) {
       _loadPopularSongs();
+    }
+  }
+
+  Future<void> _loadRecentSearches() async {
+    final List<String> history = await _historyController.getSearchHistory();
+    if (mounted) {
+      setState(() {
+        _recentSearches = history;
+      });
+    }
+  }
+
+  Future<void> _fetchSearchResults(String query) async {
+    final String trimmedQuery = query.trim();
+    if (trimmedQuery.isEmpty) {
+      setState(() {
+        _searchResults = <Song>[];
+        _isSearching = false;
+      });
+      if (widget.selectMode) {
+        _loadPopularSongs();
+      }
+      return;
+    }
+    setState(() {
+      _isSearching = true;
+      _isLoading = true;
+    });
+    try {
+      final List<Song> results = await _songRepository.searchSongs(trimmedQuery);
+      if (mounted) {
+        setState(() {
+          _searchResults = results;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao buscar músicas: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -68,36 +112,26 @@ class _BuscarScreenState extends State<BuscarScreen> {
     }
   }
 
-  Future<void> _performSearch(String query) async {
-    if (query.isEmpty) {
-      setState(() {
-        _searchResults = <Song>[];
-        _isSearching = false;
-      });
-      if (widget.selectMode) {
-        _loadPopularSongs();
-      }
-      return;
+  void _saveSearchToHistory(String query) async {
+    final String trimmedQuery = query.trim();
+    if (trimmedQuery.isNotEmpty) {
+      await _historyController.addSearchTerm(trimmedQuery);
+      _loadRecentSearches();
     }
+  }
 
-    setState(() {
-      _isSearching = true;
-      _isLoading = true;
-    });
-    try {
-      final List<Song> results = await _songRepository.searchSongs(query);
-      setState(() {
-        _searchResults = results;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao buscar músicas: $e')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+  void _onSearchFocusChange() {
+    if (!_searchFocusNode.hasFocus && _searchController.text.isNotEmpty) {
+      _saveSearchToHistory(_searchController.text);
     }
+  }
+
+  @override
+  void dispose() {
+    _searchFocusNode.removeListener(_onSearchFocusChange);
+    _searchFocusNode.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _selectSong(Song song) {
@@ -187,7 +221,9 @@ class _BuscarScreenState extends State<BuscarScreen> {
                                         'Artistas em alta',
                                          Icons.people_alt_rounded,
                                          onTap: () {
-                                          Navigator.pushNamed(context, '/trending_artists');
+                                          Navigator.pushNamed(context, '/trending_artists').then((_) {
+                                            _loadRecentSearches();
+                                          });
                                          }
                                       ),
                                       _buildCategoryItem(
@@ -236,11 +272,11 @@ class _BuscarScreenState extends State<BuscarScreen> {
                                   child: ListView.builder(
                                     physics: const BouncingScrollPhysics(),
                                     padding: EdgeInsets.zero,
-                                    itemCount: recentSearches.length,
+                                    itemCount: _recentSearches.length,
                                     itemBuilder: (BuildContext context, int index) {
                                       return Padding(
                                         padding: const EdgeInsets.only(bottom: 12),
-                                        child: _buildRecentSearchItem(recentSearches[index]),
+                                        child: _buildRecentSearchItem(_recentSearches[index]),
                                       );
                                     },
                                   ),
@@ -290,7 +326,9 @@ class _BuscarScreenState extends State<BuscarScreen> {
   Widget _buildSearchBar() {
     return TextField(
       controller: _searchController,
-      onChanged: _performSearch,
+      focusNode: _searchFocusNode,
+      onChanged: _fetchSearchResults,
+      onSubmitted: _saveSearchToHistory,
       decoration: InputDecoration(
         hintText: widget.selectMode ? 'Buscar músicas...' : 'O que você procura?',
         hintStyle: AppTextStyles.hintText(color: AppColors.primaryLight),
@@ -299,7 +337,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
             ? IconButton(
                 onPressed: () {
                   _searchController.clear();
-                  _performSearch('');
+                  _fetchSearchResults('');
                 },
                 icon: const Icon(Icons.clear, color: AppColors.textSecondary),
               )
@@ -501,7 +539,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
       borderRadius: BorderRadius.circular(12),
       onTap: () {
         _searchController.text = searchTerm;
-        _performSearch(searchTerm);
+        _fetchSearchResults(searchTerm);
       },
       child: Container(
         width: double.infinity,

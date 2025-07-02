@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tunetrail/controller/search_history_controller.dart';
 import 'package:tunetrail/view/buscar_screen.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
@@ -13,6 +14,7 @@ class TrendingArtistsScreen extends StatefulWidget {
 
 class _TrendingArtistsScreenState extends State<TrendingArtistsScreen> {
   final SongRepository _songRepository = SongRepository();
+  final SearchHistoryController _historyController = SearchHistoryController();
   late Future<List<String>> _trendingArtistsFuture;
 
   @override
@@ -66,6 +68,7 @@ class _TrendingArtistsScreenState extends State<TrendingArtistsScreen> {
                 leading: const Icon(Icons.person, color: AppColors.primaryColor),
                 title: Text(artist, style: AppTextStyles.subtitleMedium()),
                 onTap: () {
+                  _historyController.addSearchTerm(artist);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
