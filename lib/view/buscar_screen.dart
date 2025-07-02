@@ -177,7 +177,13 @@ class _BuscarScreenState extends State<BuscarScreen> {
                                     mainAxisSpacing: 12,
                                     childAspectRatio: 2.0,
                                     children: <Widget>[
-                                      _buildCategoryItem('Artistas em alta', Icons.people_alt_rounded),
+                                      _buildCategoryItem(
+                                        'Artistas em alta',
+                                         Icons.people_alt_rounded,
+                                         onTap: () {
+                                          Navigator.pushNamed(context, '/trending_artists');
+                                         }
+                                      ),
                                       _buildCategoryItem('Músicas em alta', Icons.trending_up_rounded),
                                       _buildCategoryItem('Novos lançamentos', Icons.new_releases_rounded),
                                       _buildCategoryItem('Gêneros musicais', Icons.music_note_rounded),
@@ -424,12 +430,10 @@ class _BuscarScreenState extends State<BuscarScreen> {
     );
   }
 
-  Widget _buildCategoryItem(String title, IconData icon) {
+  Widget _buildCategoryItem(String title, IconData icon, {VoidCallback? onTap}) {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: () {
-        // Adicionar as rotas
-      },
+      onTap: onTap,
       child: Container(
         height: 100,
         decoration: BoxDecoration(
