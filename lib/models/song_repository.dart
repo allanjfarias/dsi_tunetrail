@@ -39,4 +39,28 @@ class SongRepository {
       rethrow;
     }
   }
+
+  Future<List<String>> fetchTrendingArtists() async {
+    try {
+      final List<Map<String, dynamic>> response = await supabase
+        .from('songs')
+        .select('artists')
+        .order('popularity', ascending: false)
+        .limit(50);
+      final Set<String> uniqueArtists = <String>{};
+      for (final Map<String, dynamic> song in response) {
+        final String artistsString = song['artists'] as String;
+        final List<String> artistsList = artistsString.split(';');
+        for (final String artist in artistsList) {
+          if (artist.trim().isNotEmpty) {
+            uniqueArtists.add(artist.trim());
+          }
+        }
+      }
+      return uniqueArtists.toList();
+    } catch (e) {
+      debugPrint('Erro em fetchTrendingArtists: $e');
+      rethrow;
+    }
+  }
 }
