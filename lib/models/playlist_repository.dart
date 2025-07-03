@@ -1,3 +1,4 @@
+import 'package:http/http.dart';
 import 'package:tunetrail/models/playlist.dart';
 import 'package:tunetrail/models/crud_repository.dart';
 
@@ -54,6 +55,19 @@ class PlaylistRepository extends CrudRepository<Playlist> {
       }).toList();
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<List<Playlist>> fetchUserPlaylists(String userId) async {
+    try {
+      final response = await supabase
+        .from('playlists')
+        .select()
+        .eq('owner_id', userId)
+        .order('title', ascending: true);
+      return (response as List).map((e) => Playlist.fromJson(e)).toList();
+    } catch (e) {
+      throw Exception('Erro ao buscar playlists do usuário: $e');
     }
   }
 

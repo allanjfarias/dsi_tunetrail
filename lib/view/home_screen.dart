@@ -5,6 +5,8 @@ import 'package:tunetrail/models/event.dart';
 import 'package:tunetrail/models/event_repository.dart';
 import 'package:tunetrail/models/profile.dart';
 import 'package:tunetrail/view/dialogs/event_details_popup.dart';
+import 'package:tunetrail/models/playlist_repository.dart';
+import 'package:tunetrail/models/playlist.dart';
 import 'package:tunetrail/view/playlist_details_screen.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
@@ -21,8 +23,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final AuthController _authController = AuthController();
   final EventRepository _eventRepository = EventRepository();
   final EventController _eventController = EventController();
+  final PlaylistRepository _playlistRepository = PlaylistRepository();
   late Future<Profile?> _userProfileFuture;
   late Future<List<Event>> _eventsFuture;
+  late Future<List<Playlist>> _playlistsFuture;
 
   @override
   void initState() {
@@ -32,10 +36,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadData() {
     final user = _authController.usuarioLogado;
-    setState(() {
-      _userProfileFuture = (user != null) ? _authController.profileRepository.readOne(user.id) : Future.value(null);
-      _eventsFuture = _eventRepository.fetchAllEvents();
-    });
+    _userProfileFuture = (user != null) ? _authController.profileRepository.readOne(user.id) : Future.value(null);
+    _eventsFuture = _eventRepository.fetchAllEvents();
+    if (user != null) {
+      _playlistsFuture = _playlistRepository.fetchUserPlaylists(user.id);
+    } else {
+      _playlistsFuture = Future.value([]);
+    }
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -68,9 +78,10 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
             _buildEventsCarousel(),
             const SizedBox(height: 24),
-
-            // TODO: Implementar as seções de Playlists e Novidades no futuro
-            // As seções abaixo foram removidas temporariamente para focar nos Eventos.
+            _buildSectionTitle('Suas Playlists'),
+            const SizedBox(height: 12),
+            _buildPlaylistsCarousel(),
+            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -182,4 +193,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildEmptyState(String message) => SizedBox(
       height: 140, child: Center(child: Text(message, style: AppTextStyles.bodyMedium(color: AppColors.textSecondary))));
+  
+  Widget _buildPlaylistsCarousel() {
+  return FutureBuilder<List<Playlist>>(
+    future: _playlistsFuture,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return _buildLoadingIndicator();
+      }
+      if (snapshot.hasError) {
+        return _buildEmptyState('Erro ao carregar playlists.');
+      }
+      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return _buildEmptyState('Ainda não possui playlists');
+      }
+      final List<Playlist> playlists = snapshot.data!;
+      return _buildHorizontalCardList(
+        itemCount: playlists.length,
+        itemBuilder: (context, index) {
+          final Playlist playlist = playlists[index];
+          return HomeCard(
+            title: playlist.title,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlaylistDetailsScreen(playlist: playlist),
+                ),
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+}
+
 }
