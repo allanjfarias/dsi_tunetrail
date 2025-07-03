@@ -1,8 +1,11 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:tunetrail/controller/auth_controller.dart';
+import 'package:tunetrail/controller/event_controller.dart';
+import 'package:tunetrail/models/event.dart';
+import 'package:tunetrail/models/event_repository.dart';
 import 'package:tunetrail/models/profile.dart';
+import 'package:tunetrail/view/dialogs/event_details_popup.dart';
+import 'package:tunetrail/view/playlist_details_screen.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import 'home/home_card.dart';
@@ -12,63 +15,28 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-  }
+}
 
 class _HomeScreenState extends State<HomeScreen> {
-
   final AuthController _authController = AuthController();
-  Profile? _userProfile;
-  bool _isLoading = true;
+  final EventRepository _eventRepository = EventRepository();
+  final EventController _eventController = EventController();
+  late Future<Profile?> _userProfileFuture;
+  late Future<List<Event>> _eventsFuture;
 
   @override
   void initState() {
     super.initState();
-    _loadUserProfile();
+    _loadData();
   }
 
-  Future<void> _loadUserProfile() async {
+  void _loadData() {
     final user = _authController.usuarioLogado;
-    if (user != null) {
-      try {
-        final profile = await _authController.profileRepository.readOne(user.id);
-        if (mounted) {
-          setState(() {
-            _userProfile = profile;
-            _isLoading = false;
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      }
-    }
+    setState(() {
+      _userProfileFuture = (user != null) ? _authController.profileRepository.readOne(user.id) : Future.value(null);
+      _eventsFuture = _eventRepository.fetchAllEvents();
+    });
   }
-  
-  // dados de exemplo para os carrosséis
-  static const List<Map<String, String>> _eventosData = <Map<String, String>>[
-  <String, String>{'title': 'Show de Rock em Recife','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'Festival Jazz & Blues','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'Orquestra Sinfônica','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'Samba na Lapa','image': 'https://i.imgur.com/btItlKy.jpeg',},
-];
-
-static const List<Map<String, String>> _playlistsData = <Map<String, String>>[
-  <String, String>{'title': 'Top Hits Brasil','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'Festa de Aniversário','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'Sons da Natureza','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'Treino Pesado','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'Eletrônica Pura','image': 'https://i.imgur.com/btItlKy.jpeg',},
-];
-
-static const List<Map<String, String>> _novidadesData = <Map<String, String>>[
-  <String, String>{'title': 'Novo álbum: After Hours','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'Single: Blinding Lights','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'EP: My Dear Melancholy','image': 'https://i.imgur.com/btItlKy.jpeg',},
-  <String, String>{'title': 'Novo remix de X','image': 'https://i.imgur.com/btItlKy.jpeg',},
-];
 
   @override
   Widget build(BuildContext context) {
@@ -81,43 +49,30 @@ static const List<Map<String, String>> _novidadesData = <Map<String, String>>[
           children: <Widget>[
             const Icon(Icons.music_note, color: AppColors.primaryColor),
             const SizedBox(width: 2),
-            Text(
-              'TuneTrail',
-              style: AppTextStyles.headlineLarge(
-                color: AppColors.primaryColor,
-              ),
-            ),
+            Text('TuneTrail', style: AppTextStyles.headlineLarge(color: AppColors.primaryColor)),
           ],
         ),
         automaticallyImplyLeading: false,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primaryColor)) 
-          :ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: <Widget>[
-              Text(
-                'Olá,',
-                style: AppTextStyles.bodyLarge(color: AppColors.textSecondary),
-              ),
-              Text(
-                _userProfile?.nome ?? 'Usuário',
-                style: AppTextStyles.headlineMedium(),
-              ),
-              const SizedBox(height: 24),
-              _buildSectionTitle('Eventos próximos'),
-              const SizedBox(height: 12),
-              _buildHorizontalCardList(items: _eventosData,),
-              const SizedBox(height: 24),
-              _buildSectionTitle('Suas playlists'),
-              const SizedBox(height: 12),
-              _buildHorizontalCardList(items: _playlistsData),
-              const SizedBox(height: 24),
-              _buildSectionTitle('Novidades'),
-              const SizedBox(height: 12),
-              _buildHorizontalCardList(items: _novidadesData),
-              const SizedBox(height: 24),
-            ],
+      body: RefreshIndicator(
+        onRefresh: () async => _loadData(),
+        color: AppColors.primaryColor,
+        backgroundColor: AppColors.card,
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: <Widget>[
+            _buildGreeting(),
+            const SizedBox(height: 24),
+
+            _buildSectionTitle('Eventos'),
+            const SizedBox(height: 12),
+            _buildEventsCarousel(),
+            const SizedBox(height: 24),
+
+            // TODO: Implementar as seções de Playlists e Novidades no futuro
+            // As seções abaixo foram removidas temporariamente para focar nos Eventos.
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: AppColors.background,
@@ -128,21 +83,12 @@ static const List<Map<String, String>> _novidadesData = <Map<String, String>>[
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Buscar'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Perfil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today_outlined),
-            label: 'Eventos',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today_outlined), label: 'Eventos'),
         ],
         onTap: (int index) {
-          setState(() {
-          });
+          if (index == 0) return;
           switch (index) {
-            case 0:
-              break;
             case 1:
               Navigator.pushReplacementNamed(context, '/buscar_screen');
               break;
@@ -158,34 +104,82 @@ static const List<Map<String, String>> _novidadesData = <Map<String, String>>[
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: AppTextStyles.headlineSmall(),
+  Widget _buildGreeting() {
+    return FutureBuilder<Profile?>(
+      future: _userProfileFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+          return const SizedBox(height: 48);
+        }
+        final String name = snapshot.data?.nome ?? 'Usuário';
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Olá,', style: AppTextStyles.bodyLarge(color: AppColors.textSecondary)),
+            Text(name, style: AppTextStyles.headlineMedium()),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildEventsCarousel() {
+    return FutureBuilder<List<Event>>(
+      future: _eventsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingIndicator();
+        }
+        if (snapshot.hasError) {
+          return _buildEmptyState('Erro ao carregar eventos.');
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return _buildEmptyState('Nenhum evento encontrado.');
+        }
+
+        final List<Event> events = snapshot.data!;
+        return _buildHorizontalCardList(
+          itemCount: events.length,
+          itemBuilder: (context, index) {
+            final Event event = events[index];
+            return HomeCard(
+              title: event.name,
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => EventDetailsPopup(
+                    event: event,
+                    eventController: _eventController,
+                    authController: _authController,
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 
   Widget _buildHorizontalCardList({
-    required List<Map<String, String>> items,
+    required int itemCount,
+    required Widget Function(BuildContext, int) itemBuilder,
   }) {
     return SizedBox(
       height: 140,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          final Map<String, String> item = items[index];
-          return HomeCard(
-            title: item['title'] ?? '',
-            imageUrl: item['image'] ?? 'https://via.placeholder.com/150',
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Clicou em ${item['title']}')),
-              );
-            },
-          );
-        },
+        itemCount: itemCount,
+        itemBuilder: itemBuilder,
       ),
     );
   }
+
+  Widget _buildSectionTitle(String title) => Text(title, style: AppTextStyles.headlineSmall());
+
+  Widget _buildLoadingIndicator() => const SizedBox(
+      height: 140, child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor)));
+
+  Widget _buildEmptyState(String message) => SizedBox(
+      height: 140, child: Center(child: Text(message, style: AppTextStyles.bodyMedium(color: AppColors.textSecondary))));
 }
