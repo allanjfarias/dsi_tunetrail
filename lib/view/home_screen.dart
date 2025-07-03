@@ -1,6 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:tunetrail/controller/auth_controller.dart';
+import 'package:tunetrail/models/profile.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
+import 'home/home_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,80 +15,60 @@ class HomeScreen extends StatefulWidget {
   }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  final AuthController _authController = AuthController();
+  Profile? _userProfile;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    final user = _authController.usuarioLogado;
+    if (user != null) {
+      try {
+        final profile = await _authController.profileRepository.readOne(user.id);
+        if (mounted) {
+          setState(() {
+            _userProfile = profile;
+            _isLoading = false;
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
+  }
   
   // dados de exemplo para os carrosséis
   static const List<Map<String, String>> _eventosData = <Map<String, String>>[
-    <String, String>{
-      'title': 'Show de rock em Recife',
-      'image': 'assets/images/evento1.png',
-    },
-    <String, String>{
-      'title': 'Festival Jazz & Blues',
-      'image': 'assets/images/evento2.png',
-    },
-    <String, String>{
-      'title': 'Orquestra Sinfônica',
-      'image': 'assets/images/evento3.png',
-    },
-    <String, String>{
-      'title': 'Samba na lapa',
-      'image': 'assets/images/evento5.png',
-    },
-    <String, String>{
-      'title': 'Show de sertanejo universitário',
-      'image': 'assets/images/evento6.png',
-    },
-  ];
+  <String, String>{'title': 'Show de Rock em Recife','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'Festival Jazz & Blues','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'Orquestra Sinfônica','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'Samba na Lapa','image': 'https://i.imgur.com/btItlKy.jpeg',},
+];
 
-  static const List<Map<String, String>> _playlistsData = <Map<String, String>>[
-    <String, String>{
-      'title': 'Top Hits Brasil',
-      'image': 'assets/images/playlist1.png',
-    },
-    <String, String>{
-      'title': 'Festa de aniversário',
-      'image': 'assets/images/playlist2.png',
-    },
-    <String, String>{
-      'title': 'Sons da natureza',
-      'image': 'assets/images/playlist3.png',
-    },
-    <String, String>{
-      'title': 'Treino Pesado',
-      'image': 'assets/images/playlist4.png',
-    },
-    <String, String>{
-      'title': 'Clássicos Inesquecíveis',
-      'image': 'assets/images/playlist6.png',
-    },
-    <String, String>{
-      'title': 'Eletrônica Pura',
-      'image': 'assets/images/playlist7.png',
-    },
-  ];
+static const List<Map<String, String>> _playlistsData = <Map<String, String>>[
+  <String, String>{'title': 'Top Hits Brasil','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'Festa de Aniversário','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'Sons da Natureza','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'Treino Pesado','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'Eletrônica Pura','image': 'https://i.imgur.com/btItlKy.jpeg',},
+];
 
-  static const List<Map<String, String>> _novidadesData = <Map<String, String>>[
-    <String, String>{
-      'title': 'Novo álbum: xxx de xxx',
-      'image': 'assets/images/novidade1.png',
-    },
-    <String, String>{
-      'title': 'Novo single de X',
-      'image': 'assets/images/novidade2.png',
-    },
-    <String, String>{
-      'title': 'Novo EP de X',
-      'image': 'assets/images/novidade3.png',
-    },
-    <String, String>{
-      'title': 'Novo álbum ao vivo',
-      'image': 'assets/images/novidade4.png',
-    },
-    <String, String>{
-      'title': 'Novo remix de X',
-      'image': 'assets/images/novidade5.png',
-    },
-  ];
+static const List<Map<String, String>> _novidadesData = <Map<String, String>>[
+  <String, String>{'title': 'Novo álbum: After Hours','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'Single: Blinding Lights','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'EP: My Dear Melancholy','image': 'https://i.imgur.com/btItlKy.jpeg',},
+  <String, String>{'title': 'Novo remix de X','image': 'https://i.imgur.com/btItlKy.jpeg',},
+];
 
   @override
   Widget build(BuildContext context) {
@@ -106,31 +91,33 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         automaticallyImplyLeading: false,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: <Widget>[
-          _buildSectionTitle('Eventos próximos'),
-          const SizedBox(height: 12),
-          _buildHorizontalCardList(
-            items: _eventosData,
-            cardType: CardType.eventos,
-          ),
-          const SizedBox(height: 24),
-          _buildSectionTitle('Suas playlists'),
-          const SizedBox(height: 12),
-          _buildHorizontalCardList(
-            items: _playlistsData,
-            cardType: CardType.playlists,
-          ),
-          const SizedBox(height: 24),
-          _buildSectionTitle('Novidades'),
-          const SizedBox(height: 12),
-          _buildHorizontalCardList(
-            items: _novidadesData,
-            cardType: CardType.novidades,
-          ),
-          const SizedBox(height: 24),
-        ],
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: AppColors.primaryColor)) 
+          :ListView(
+            padding: const EdgeInsets.all(16.0),
+            children: <Widget>[
+              Text(
+                'Olá,',
+                style: AppTextStyles.bodyLarge(color: AppColors.textSecondary),
+              ),
+              Text(
+                _userProfile?.nome ?? 'Usuário',
+                style: AppTextStyles.headlineMedium(),
+              ),
+              const SizedBox(height: 24),
+              _buildSectionTitle('Eventos próximos'),
+              const SizedBox(height: 12),
+              _buildHorizontalCardList(items: _eventosData,),
+              const SizedBox(height: 24),
+              _buildSectionTitle('Suas playlists'),
+              const SizedBox(height: 12),
+              _buildHorizontalCardList(items: _playlistsData),
+              const SizedBox(height: 24),
+              _buildSectionTitle('Novidades'),
+              const SizedBox(height: 12),
+              _buildHorizontalCardList(items: _novidadesData),
+              const SizedBox(height: 24),
+            ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: AppColors.background,
@@ -180,87 +167,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHorizontalCardList({
     required List<Map<String, String>> items,
-    required CardType cardType,
   }) {
-    double cardHeight = 120;
-    double cardWidth = 120;
-    double textSpaceHeight =
-        55; // altura necessária pra o texto abaixo dos cards
-
     return SizedBox(
-      height:
-          cardType == CardType.eventos
-              ? cardHeight
-              : cardHeight + textSpaceHeight,
+      height: 140,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
           final Map<String, String> item = items[index];
-          return Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: SizedBox(
-              width: cardWidth,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: cardWidth,
-                    height: cardHeight,
-                    decoration: BoxDecoration(
-                      color:
-                          cardType == CardType.eventos
-                              ? AppColors.primaryColor
-                              : AppColors.card,
-                      borderRadius: BorderRadius.circular(8.0),
-                      border:
-                          cardType != CardType.eventos
-                              ? Border.all(
-                                color: AppColors.divider,
-                                width: 1,
-                              )
-                              : null,
-                    ),
-                    child: Center(
-                      child:
-                          cardType == CardType.eventos
-                              ? Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0,
-                                ),
-                                child: Text(
-                                  item['title'] ?? '',
-                                  textAlign: TextAlign.center,
-                                  style: AppTextStyles.subtitleMedium(
-                                    color: AppColors.textPrimary,
-                                  ).copyWith(fontSize: 14),
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              )
-                              : null,
-                    ),
-                  ),
-                  if (cardType != CardType.eventos)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        item['title'] ?? 'Nome ${index + 1}',
-                        style: AppTextStyles.bodyMedium(
-                          color: AppColors.textSecondary,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                ],
-              ),
-            ),
+          return HomeCard(
+            title: item['title'] ?? '',
+            imageUrl: item['image'] ?? 'https://via.placeholder.com/150',
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Clicou em ${item['title']}')),
+              );
+            },
           );
         },
       ),
     );
   }
 }
-
-enum CardType { eventos, playlists, novidades }
