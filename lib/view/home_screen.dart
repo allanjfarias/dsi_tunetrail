@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tunetrail/controller/auth_controller.dart';
 import 'package:tunetrail/controller/event_controller.dart';
+import 'package:tunetrail/controller/search_history_controller.dart';
 import 'package:tunetrail/models/event.dart';
 import 'package:tunetrail/models/event_repository.dart';
 import 'package:tunetrail/models/profile.dart';
+import 'package:tunetrail/models/song_repository.dart';
+import 'package:tunetrail/view/buscar_screen.dart';
 import 'package:tunetrail/view/dialogs/event_details_popup.dart';
 import 'package:tunetrail/models/playlist_repository.dart';
 import 'package:tunetrail/models/playlist.dart';
@@ -24,9 +27,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final EventRepository _eventRepository = EventRepository();
   final EventController _eventController = EventController();
   final PlaylistRepository _playlistRepository = PlaylistRepository();
+  final SongRepository _songRepository = SongRepository();
+  final SearchHistoryController _historyController = SearchHistoryController();
   late Future<Profile?> _userProfileFuture;
   late Future<List<Event>> _eventsFuture;
   late Future<List<Playlist>> _playlistsFuture;
+  late Future<List<String>> _trendingArtistsFuture;
 
   @override
   void initState() {
@@ -43,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       _playlistsFuture = Future.value([]);
     }
+    _trendingArtistsFuture = _songRepository.fetchTrendingArtists();
     if (mounted) {
       setState(() {});
     }
@@ -81,6 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildSectionTitle('Suas Playlists'),
             const SizedBox(height: 12),
             _buildPlaylistsCarousel(),
+            const SizedBox(height: 24),
+            _buildSectionTitle('Artistas em Alta'),
+            const SizedBox(height: 12),
+            _buildArtistsCarousel(),
             const SizedBox(height: 24),
           ],
         ),
@@ -219,6 +230,44 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => PlaylistDetailsScreen(playlist: playlist),
+                ),
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+}
+
+Widget _buildArtistsCarousel() {
+  return FutureBuilder<List<String>>(
+    future: _trendingArtistsFuture,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return _buildLoadingIndicator();
+      }
+      if (snapshot.hasError) {
+        return _buildEmptyState('Erro ao carregar artistas.');
+      }
+      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return _buildEmptyState('Nenhum artista em alta.');
+      }
+      final List<String> artists = snapshot.data!;
+      return _buildHorizontalCardList(
+        itemCount: artists.length,
+        itemBuilder: (context, index) {
+          final String artistName = artists[index];
+          return HomeCard(
+            title: artistName,
+            onTap: () {
+              _historyController.addSearchTerm(artistName);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BuscarScreen(
+                    initialSearchQuery: artistName,
+                  ),
                 ),
               );
             },
