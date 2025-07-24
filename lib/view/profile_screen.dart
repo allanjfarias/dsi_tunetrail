@@ -259,15 +259,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildActionButton('Minhas playlists', () {
                     Navigator.pushNamed(context, '/my_playlists');
                   }),
-/*
-                  const SizedBox(height: 16),
-                  _buildActionButton('Favoritos', () {
-                    // TODO: Implementar tela de favoritos
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
-                    );
-                  }),
-*/
+
+                  // const SizedBox(height: 16),
+                  // _buildActionButton('Favoritos', () {
+                  //   // 
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+                  //   );
+                  // }),
+
                   const SizedBox(height: 16),
                   _buildActionButton('Criar playlist', () {
                     Navigator.pushNamed(context, '/create_playlist');
@@ -314,7 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: AppColors.background,
         selectedItemColor: AppColors.primaryColor,
         unselectedItemColor: AppColors.textSecondary,
-        currentIndex: 2,
+        currentIndex: _currentIndex,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Buscar'),

@@ -33,9 +33,7 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: AppColors.card,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -61,7 +59,9 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
               controller: _titleController,
               decoration: InputDecoration(
                 labelText: 'Título',
-                labelStyle: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
+                labelStyle: AppTextStyles.bodyMedium(
+                  color: AppColors.textSecondary,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(color: AppColors.textSecondary),
@@ -89,27 +89,33 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
                   onPressed: () async {
                     if (_titleController.text.trim().isNotEmpty) {
                       try {
-                        final Playlist updatedPlaylist = widget.playlist.copyWith(
-                          title: _titleController.text.trim(),
+                        final Playlist updatedPlaylist = widget.playlist
+                            .copyWith(title: _titleController.text.trim());
+
+                        final PlaylistController playlistController =
+                            PlaylistController(
+                              playlistRepository: PlaylistRepository(),
+                              playlistSongRepo: PlaylistSongRepository(),
+                              currentUserId: widget.playlist.ownerId,
+                            );
+
+                        await playlistController.updatePlaylist(
+                          updatedPlaylist,
                         );
-                        
-                        final PlaylistController playlistController = PlaylistController(
-                          playlistRepository: PlaylistRepository(),
-                          playlistSongRepo: PlaylistSongRepository(),
-                          currentUserId: widget.playlist.ownerId,
-                        );
-                        
-                        await playlistController.updatePlaylist(updatedPlaylist);
-                        
+
                         widget.onPlaylistUpdated(updatedPlaylist);
+                        if (!context.mounted) return;
+
                         Navigator.pop(context);
-                      
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Playlist atualizada!')),
                         );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Erro ao atualizar playlist: $e')),
+                          SnackBar(
+                            content: Text('Erro ao atualizar playlist: $e'),
+                          ),
                         );
                       }
                     }
@@ -136,4 +142,3 @@ class _EditPlaylistDialogState extends State<EditPlaylistDialog> {
     super.dispose();
   }
 }
-

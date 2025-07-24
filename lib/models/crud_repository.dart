@@ -49,13 +49,18 @@ class CrudRepository<T> {
 
   Future<T> update(String id, T item) async {
     try {
-      final Map<String, dynamic> result =
+      final Map<String, dynamic>? result =
           await supabase
               .from(table)
               .update(toJson(item))
               .eq(primaryKey, id)
               .select()
-              .single();
+              .maybeSingle(); 
+
+      if (result == null) {
+        throw Exception('Nenhum item com id=$id encontrado para atualização');
+      }
+
       return fromJson(result);
     } catch (e) {
       rethrow;

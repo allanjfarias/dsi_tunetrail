@@ -6,6 +6,7 @@ import 'package:tunetrail/models/event.dart';
 import 'package:tunetrail/models/event_repository.dart';
 import 'package:tunetrail/models/profile.dart';
 import 'package:tunetrail/models/song_repository.dart';
+import 'package:tunetrail/models/user.dart';
 import 'package:tunetrail/view/buscar_screen.dart';
 import 'package:tunetrail/view/dialogs/event_details_popup.dart';
 import 'package:tunetrail/models/playlist_repository.dart';
@@ -41,13 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _loadData() {
-    final user = _authController.usuarioLogado;
-    _userProfileFuture = (user != null) ? _authController.profileRepository.readOne(user.id) : Future.value(null);
+    final User? user = _authController.usuarioLogado;
+    _userProfileFuture = (user != null) ? _authController.profileRepository.readOne(user.id) : Future<Profile?>.value(null);
     _eventsFuture = _eventRepository.fetchAllEvents();
     if (user != null) {
       _playlistsFuture = _playlistRepository.fetchUserPlaylists(user.id);
     } else {
-      _playlistsFuture = Future.value([]);
+      _playlistsFuture = Future<List<Playlist>>.value(<Playlist>[]);
     }
     _trendingArtistsFuture = _songRepository.fetchTrendingArtists();
     if (mounted) {
@@ -129,14 +130,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildGreeting() {
     return FutureBuilder<Profile?>(
       future: _userProfileFuture,
-      builder: (context, snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<Profile?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
           return const SizedBox(height: 48);
         }
         final String name = snapshot.data?.nome ?? 'Usuário';
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Text('Olá,', style: AppTextStyles.bodyLarge(color: AppColors.textSecondary)),
             Text(name, style: AppTextStyles.headlineMedium()),
           ],
@@ -148,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildEventsCarousel() {
     return FutureBuilder<List<Event>>(
       future: _eventsFuture,
-      builder: (context, snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingIndicator();
         }
@@ -162,14 +163,14 @@ class _HomeScreenState extends State<HomeScreen> {
         final List<Event> events = snapshot.data!;
         return _buildHorizontalCardList(
           itemCount: events.length,
-          itemBuilder: (context, index) {
+          itemBuilder: (BuildContext context, int index) {
             final Event event = events[index];
             return HomeCard(
               title: event.name,
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (context) => EventDetailsPopup(
+                  builder: (BuildContext context) => EventDetailsPopup(
                     event: event,
                     eventController: _eventController,
                     authController: _authController,
@@ -208,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildPlaylistsCarousel() {
   return FutureBuilder<List<Playlist>>(
     future: _playlistsFuture,
-    builder: (context, snapshot) {
+    builder: (BuildContext context, AsyncSnapshot<List<Playlist>> snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return _buildLoadingIndicator();
       }
@@ -221,15 +222,15 @@ class _HomeScreenState extends State<HomeScreen> {
       final List<Playlist> playlists = snapshot.data!;
       return _buildHorizontalCardList(
         itemCount: playlists.length,
-        itemBuilder: (context, index) {
+        itemBuilder: (BuildContext context, int index) {
           final Playlist playlist = playlists[index];
           return HomeCard(
             title: playlist.title,
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => PlaylistDetailsScreen(playlist: playlist),
+                MaterialPageRoute<PlaylistDetailsScreen>(
+                  builder: (BuildContext context) => PlaylistDetailsScreen(playlist: playlist),
                 ),
               );
             },
@@ -243,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
 Widget _buildArtistsCarousel() {
   return FutureBuilder<List<String>>(
     future: _trendingArtistsFuture,
-    builder: (context, snapshot) {
+    builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return _buildLoadingIndicator();
       }
@@ -256,7 +257,7 @@ Widget _buildArtistsCarousel() {
       final List<String> artists = snapshot.data!;
       return _buildHorizontalCardList(
         itemCount: artists.length,
-        itemBuilder: (context, index) {
+        itemBuilder: (BuildContext context, int index) {
           final String artistName = artists[index];
           return HomeCard(
             title: artistName,
@@ -264,8 +265,8 @@ Widget _buildArtistsCarousel() {
               _historyController.addSearchTerm(artistName);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => BuscarScreen(
+                MaterialPageRoute<BuscarScreen>(
+                  builder: (BuildContext context) => BuscarScreen(
                     initialSearchQuery: artistName,
                   ),
                 ),

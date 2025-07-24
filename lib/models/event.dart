@@ -39,4 +39,22 @@ class Event {
   }
 
   LatLng get location => LatLng(latitude, longitude);
+
+  Event copyWith({
+    String? id,
+    String? name,
+    String? description,
+    double? latitude,
+    double? longitude,
+    String? ownerId,
+  }) {
+    return Event(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      ownerId: ownerId ?? this.ownerId,
+    );
+  }
 }
