@@ -27,7 +27,7 @@ class _GenreSongsScreenState extends State<GenreSongsScreen> {
   void _showCommentsDialog(Song song) {
     showDialog(
       context: context,
-      builder: (context) => CommentsDialog(
+      builder: (BuildContext context) => CommentsDialog(
         song: song,
         commentController: _commentController, 
         userId: _authController.usuarioLogado!.id),
@@ -66,21 +66,21 @@ class _GenreSongsScreenState extends State<GenreSongsScreen> {
       ),
       body: FutureBuilder<List<Song>>(
         future: _genreSongsFuture,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator(color: AppColors.primaryColor));
           }
           if (snapshot.hasError) {
             return Center(child: Text('Erro ao carregar músicas: ${snapshot.error}', style: AppTextStyles.bodyMedium(color: AppColors.error)));
           }
-          final List<Song> songs = snapshot.data ?? [];
+          final List<Song> songs = snapshot.data ?? <Song>[];
           if (songs.isEmpty) {
             return Center(child: Text('Nenhuma música encontrada neste gênero.', style: AppTextStyles.bodyLarge(color: AppColors.textSecondary)));
           }
           return ListView.builder(
             padding: const EdgeInsets.all(16.0),
             itemCount: songs.length,
-            itemBuilder: (context, index) {
+            itemBuilder: (BuildContext context, int index) {
               final Song song = songs[index];
               return Container(
                 margin: const EdgeInsets.only(bottom: 12),
@@ -97,8 +97,8 @@ class _GenreSongsScreenState extends State<GenreSongsScreen> {
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(color: AppColors.inputBackground),
-                      errorWidget: (context, url, error) => const Icon(Icons.music_note, color: AppColors.textSecondary),
+                      placeholder: (BuildContext context, String url) => Container(color: AppColors.inputBackground),
+                      errorWidget: (BuildContext context, String url, dynamic error) => const Icon(Icons.music_note, color: AppColors.textSecondary),
                     ),
                   ),
                   title: Text(song.name, style: AppTextStyles.subtitleMedium(), maxLines: 1, overflow: TextOverflow.ellipsis),

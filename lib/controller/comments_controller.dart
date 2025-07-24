@@ -1,4 +1,4 @@
-import 'package:postgrest/src/types.dart';
+import 'package:postgrest/postgrest.dart'; 
 
 import '../models/crud_repository.dart';
 import '../models/comments.dart';

@@ -87,7 +87,7 @@ class PlaylistSongRepository {
     try {
       await supabase
           .from('playlist_songs')
-          .update({'position': newPosition})
+          .update(<String, dynamic>{'position': newPosition})
           .eq('playlist_id', playlistId)
           .eq('song_id', songId);
     } catch (e) {

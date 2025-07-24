@@ -37,7 +37,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
   void _showCommentsDialog(Song song) {
   showDialog(
     context: context,
-    builder: (context) => CommentsDialog(
+    builder: (BuildContext context) => CommentsDialog(
       song: song,
       commentController: _commentController,
       userId: _authController.usuarioLogado!.id,
@@ -319,7 +319,7 @@ class _BuscarScreenState extends State<BuscarScreen> {
               type: BottomNavigationBarType.fixed,
               selectedItemColor: AppColors.primaryColor,
               unselectedItemColor: AppColors.textDisabled,
-              currentIndex: 1,
+              currentIndex: _currentIndex,
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
                 BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Buscar'),
@@ -393,18 +393,18 @@ class _BuscarScreenState extends State<BuscarScreen> {
     );
   }
 
-  Widget _buildPopularSongs() {
-    return ListView.builder(
-      itemCount: _searchResults.length,
-      itemBuilder: (BuildContext context, int index) {
-        final Song song = _searchResults[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
-          child: _buildSongCard(song),
-        );
-      },
-    );
-  }
+  // Widget _buildPopularSongs() {
+  //   return ListView.builder(
+  //     itemCount: _searchResults.length,
+  //     itemBuilder: (BuildContext context, int index) {
+  //       final Song song = _searchResults[index];
+  //       return Padding(
+  //         padding: const EdgeInsets.only(bottom: 12.0),
+  //         child: _buildSongCard(song),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildSongCard(Song song) {
     return Container(

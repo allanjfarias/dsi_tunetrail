@@ -37,7 +37,7 @@ class _TrendingArtistsScreenState extends State<TrendingArtistsScreen> {
       ),
       body: FutureBuilder<List<String>>(
         future: _trendingArtistsFuture,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(color: AppColors.primaryColor),
@@ -51,7 +51,7 @@ class _TrendingArtistsScreenState extends State<TrendingArtistsScreen> {
               ),
             );
           }
-          final List<String> artists = snapshot.data ?? [];
+          final List<String> artists = snapshot.data ?? <String>[];
           if (artists.isEmpty) {
             return Center(
               child: Text(
@@ -62,7 +62,7 @@ class _TrendingArtistsScreenState extends State<TrendingArtistsScreen> {
           }
           return ListView.builder(
             itemCount: artists.length,
-            itemBuilder: (context, index) {
+            itemBuilder: (BuildContext context, int index) {
               final String artist = artists[index];
               return ListTile(
                 leading: const Icon(Icons.person, color: AppColors.primaryColor),
@@ -71,8 +71,8 @@ class _TrendingArtistsScreenState extends State<TrendingArtistsScreen> {
                   _historyController.addSearchTerm(artist);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => BuscarScreen(
+                    MaterialPageRoute<BuscarScreen>(
+                      builder: (BuildContext context) => BuscarScreen(
                         initialSearchQuery: artist,
                       ),
                     ),

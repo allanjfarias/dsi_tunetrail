@@ -1,15 +1,13 @@
-import 'package:http/http.dart';
 import 'package:tunetrail/models/playlist.dart';
 import 'package:tunetrail/models/crud_repository.dart';
 
 class PlaylistRepository extends CrudRepository<Playlist> {
-  PlaylistRepository({
-    super.supabaseClient,
-  }) : super(
-          table: 'playlists',
-          fromJson: Playlist.fromJson,
-          toJson: (Playlist playlist) => playlist.toJson(),
-        );
+  PlaylistRepository({super.supabaseClient})
+    : super(
+        table: 'playlists',
+        fromJson: Playlist.fromJson,
+        toJson: (Playlist playlist) => playlist.toJson(),
+      );
 
   @override
   Future<List<Playlist>> readAll() async {
@@ -22,8 +20,9 @@ class PlaylistRepository extends CrudRepository<Playlist> {
           ''');
       return (result as List<dynamic>).map((dynamic item) {
         final Map<String, dynamic> playlistData = item as Map<String, dynamic>;
-        final Map<String, dynamic>? profileData = playlistData['profiles'] as Map<String, dynamic>?;
-        
+        final Map<String, dynamic>? profileData =
+            playlistData['profiles'] as Map<String, dynamic>?;
+
         return fromJson(<String, dynamic>{
           ...playlistData,
           'owner_name': profileData?['nome'],
@@ -34,6 +33,7 @@ class PlaylistRepository extends CrudRepository<Playlist> {
       rethrow;
     }
   }
+
   Future<List<Playlist>> readByOwnerId(String ownerId) async {
     try {
       final List<Map<String, dynamic>> result = await supabase
@@ -45,8 +45,9 @@ class PlaylistRepository extends CrudRepository<Playlist> {
           .eq('owner_id', ownerId);
       return (result as List<dynamic>).map((dynamic item) {
         final Map<String, dynamic> playlistData = item as Map<String, dynamic>;
-        final Map<String, dynamic>? profileData = playlistData['profiles'] as Map<String, dynamic>?;
-        
+        final Map<String, dynamic>? profileData =
+            playlistData['profiles'] as Map<String, dynamic>?;
+
         return fromJson(<String, dynamic>{
           ...playlistData,
           'owner_name': profileData?['nome'],
@@ -60,16 +61,17 @@ class PlaylistRepository extends CrudRepository<Playlist> {
 
   Future<List<Playlist>> fetchUserPlaylists(String userId) async {
     try {
-      final response = await supabase
-        .from('playlists')
-        .select()
-        .eq('owner_id', userId)
-        .order('title', ascending: true);
-      return (response as List).map((e) => Playlist.fromJson(e)).toList();
+      final List<dynamic> response = await supabase
+          .from('playlists')
+          .select()
+          .eq('owner_id', userId)
+          .order('title', ascending: true);
+
+      return response
+          .map((dynamic e) => Playlist.fromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw Exception('Erro ao buscar playlists do usuário: $e');
     }
   }
-
 }
-

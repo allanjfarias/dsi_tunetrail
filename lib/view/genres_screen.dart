@@ -36,21 +36,21 @@ class _GenresScreenState extends State<GenresScreen> {
       ),
       body: FutureBuilder<List<String>>(
         future: _genresFuture,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator(color: AppColors.primaryColor));
           }
           if (snapshot.hasError) {
             return Center(child: Text('Erro ao carregar gêneros: ${snapshot.error}', style: AppTextStyles.bodyMedium(color: AppColors.error)));
           }
-          final List<String> genres = snapshot.data ?? [];
+          final List<String> genres = snapshot.data ?? <String>[];
           if (genres.isEmpty) {
             return Center(child: Text('Nenhum gênero encontrado.', style: AppTextStyles.bodyLarge(color: AppColors.textSecondary)));
           }
           return ListView.separated(
             itemCount: genres.length,
-            separatorBuilder: (context, index) => const Divider(color: AppColors.divider, height: 1),
-            itemBuilder: (context, index) {
+            separatorBuilder: (BuildContext context, int index) => const Divider(color: AppColors.divider, height: 1),
+            itemBuilder: (BuildContext context, int index) {
               final String genre = genres[index];
               return ListTile(
                 title: Text(genre, style: AppTextStyles.subtitleMedium()),
@@ -59,8 +59,8 @@ class _GenresScreenState extends State<GenresScreen> {
                   // Navega para a tela que mostra as músicas do gênero selecionado
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => GenreSongsScreen(genre: genre),
+                    MaterialPageRoute<GenreSongsScreen>(
+                      builder: (BuildContext context) => GenreSongsScreen(genre: genre),
                     ),
                   );
                 },

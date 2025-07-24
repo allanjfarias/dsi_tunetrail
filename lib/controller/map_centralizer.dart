@@ -1,55 +1,53 @@
 import 'dart:async';
-
-import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 
 class MapCentralizer {
   Future<LatLng> obterLocalizacaoAtual() async {
     try {
-      final bool servicoAtivo = await Geolocator.isLocationServiceEnabled();
-      if (!servicoAtivo) {
+      if (!await _isLocationServiceEnabled()) {
         throw Exception('Serviço de localização desativado');
       }
 
-      final LocationPermission permissao =
-          await _verificarPermissoesComTimeout();
-      if (permissao != LocationPermission.whileInUse &&
-          permissao != LocationPermission.always) {
+      final LocationPermission permissao = await _verificarPermissoes();
+      if (!_isPermissionGranted(permissao)) {
         throw Exception('Permissão de localização negada');
       }
 
-      final Position posicao = await _obterPosicaoComTimeout();
-      return LatLng(posicao.latitude, posicao.longitude);
-    } catch (e) {
-      return const LatLng(-8.052240, -34.928610);
+      return await _obterPosicao();
+    } catch (_) {
+      return const LatLng(-8.052240, -34.928610); // Fallback para Recife
     }
   }
 
-  Future<LocationPermission> _verificarPermissoesComTimeout() async {
+  Future<bool> _isLocationServiceEnabled() async {
+    return await Geolocator.isLocationServiceEnabled();
+  }
+
+  Future<LocationPermission> _verificarPermissoes() async {
     try {
       return await Geolocator.checkPermission().timeout(
         const Duration(seconds: 5),
-        onTimeout: () {
-          throw TimeoutException('Timeout na verificação de permissões');
-        },
+        onTimeout: () => Geolocator.requestPermission(),
       );
-    } catch (e) {
-      // Se timeout ou erro, solicita permissão
-      return await Geolocator.requestPermission();
+    } catch (_) {
+      return Geolocator.requestPermission();
     }
   }
 
-  Future<Position> _obterPosicaoComTimeout() async {
-    return await Geolocator.getCurrentPosition(
+  bool _isPermissionGranted(LocationPermission permission) {
+    return permission == LocationPermission.whileInUse || 
+           permission == LocationPermission.always;
+  }
+
+  Future<LatLng> _obterPosicao() async {
+    final Position posicao = await Geolocator.getCurrentPosition(
       locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high, // Precisão alta
-        timeLimit: Duration(seconds: 10), // Timeout de 10 segundos
+        accuracy: LocationAccuracy.high,
+        timeLimit: Duration(seconds: 10),
       ),
-    ).timeout(
-      const Duration(seconds: 10),
-      onTimeout: () {
-        throw TimeoutException('Timeout na obtenção da posição');
-      },
-    );
+    ).timeout(const Duration(seconds: 10));
+
+    return LatLng(posicao.latitude, posicao.longitude);
   }
 }

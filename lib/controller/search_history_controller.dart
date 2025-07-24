@@ -16,7 +16,7 @@ class SearchHistoryController {
       return;
     }
     List<String> history = await getSearchHistory();
-    history.removeWhere((item) => item.toLowerCase() == trimmedTerm.toLowerCase());
+    history.removeWhere((String item) => item.toLowerCase() == trimmedTerm.toLowerCase());
     history.insert(0, trimmedTerm);
     if (history.length > _maxHistorySize) {
       history = history.sublist(0, _maxHistorySize);
